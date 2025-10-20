@@ -1,6 +1,14 @@
 import AdminLoginPage from "./pages/Admin/auth/Page";
-import { GLOBAL_ROUTES } from "./utils/Constants";
-import DashboardPage from "@/pages/Admin/Dashboard/Page.jsx";
+import { APP_CONSTANTS, GLOBAL_ROUTES } from "./utils/Constants";
+import DashboardPage from "@/pages/Admin/dashboards/Page.jsx";
+import AuctionsPage from "@/pages/Admin/auctions/Page.jsx";
+import LotsPage from "@/pages/Admin/lot/Page.jsx";
+import LiveSessionPage from "@/pages/Admin/live-session/Page.jsx";
+import TagsPage from "@/pages/Admin/tags/Page.jsx";
+import BidingHistoryPage from "@/pages/Admin/biding-history/Page.jsx";
+import UserManagementPage from "@/pages/Admin/user-management/Page.jsx";
+import FaqsPage from "@/pages/Admin/faqs/Page.jsx";
+import NotificationsPage from "@/pages/Admin/notifications/Page.jsx";
 
 import DashboardIcon from "./components/icons/DashboardIcon.jsx";
 import AuctionsIcon from "./components/icons/AuctionsIcon.jsx";
@@ -11,6 +19,7 @@ import HistoryIcon from "./components/icons/HistoryIcon.jsx";
 import UsersIcon from "./components/icons/UsersIcon.jsx";
 import FaqsIcon from "./components/icons/FaqsIcon.jsx";
 import NotificationsIcon from "./components/icons/NotificationsIcon.jsx";
+import AddNewLot from "./components/lot/AddNewLot.jsx";
 // Public/auth routes (no authentication required)
 export const publicRoutes = [
   {
@@ -27,92 +36,112 @@ export const authRequiredRoutes = [
   {
     path: GLOBAL_ROUTES.ADMIN_DASHBOARD,
     name: "Dashboard",
-    label: "dashboard",
+    label: APP_CONSTANTS.DASHBOARD_LABEL,
     icon: DashboardIcon,
     component: DashboardPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_AUCTIONS,
     name: "Auctions",
-    label: "auctions_activities",
+    label: APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL,
     icon: AuctionsIcon,
-    component: DashboardPage,
+    component: AuctionsPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_LOTS,
     name: "Lots",
-    label: "auctions_activities",
+    label: APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL,
     icon: LotsIcon,
-    component: DashboardPage,
+    component: LotsPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
+  },
+  {
+    path: GLOBAL_ROUTES.ADMIN_ADD_LOT,
+    name: "Add New Coin",
+    label: APP_CONSTANTS.ADD_NEW_COIN_LABEL,
+    icon: LotsIcon,
+    component: AddNewLot,
+    protected: true,
+    permission: null,
+    withSidebar: true,
+    includeInSidebar: false,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_LIVE_SESSIONS,
     name: "Live Session",
-    label: "auctions_activities",
+    label: APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL,
     icon: SessionIcon,
-    component: DashboardPage,
+    component: LiveSessionPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_TAGS,
     name: "Tags",
-    label: "auctions_activities",
+    label: APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL,
     icon: TagsIcon,
-    component: DashboardPage,
+    component: TagsPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_BIDDING_HISTORY,
     name: "Biding History",
-    label: "auctions_activities",
+    label: APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL,
     icon: HistoryIcon,
-    component: DashboardPage,
+    component: BidingHistoryPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_USERS,
     name: "User Management",
-    label: "users",
+    label: APP_CONSTANTS.USERS_LABEL,
     icon: UsersIcon,
-    component: DashboardPage,
+    component: UserManagementPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_FAQS,
     name: "FAQ's",
-    label: "helpAndSupport",
+    label: APP_CONSTANTS.HELP_AND_SUPPORT_LABEL,
     icon: FaqsIcon,
-    component: DashboardPage,
+    component: FaqsPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_NOTIFICATIONS,
     name: "Notifications",
-    label: "systemAndNotifications",
+    label: APP_CONSTANTS.SYSTEM_NOTIFICATIONS_LABEL,
     icon: NotificationsIcon,
-    component: DashboardPage,
+    component: NotificationsPage,
     protected: true,
     permission: null,
     withSidebar: true,
+    includeInSidebar: true,
   },
 ];
 

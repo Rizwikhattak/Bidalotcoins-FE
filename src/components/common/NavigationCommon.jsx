@@ -4,16 +4,14 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "../ui/navigation-menu";
-import { Skeleton } from "../ui/skeleton";
 import SpinnerCommon from "./SpinnerCommon";
 
 const NavigationCommon = ({
   navList = [],
   activeTab,
-  handleClick,
+  handleActiveTab,
   isLoading = false,
   ...props
 }) => {
@@ -25,24 +23,25 @@ const NavigationCommon = ({
             <SpinnerCommon className="w-10 h-10" />
           ) : (
             navList &&
-            navList.map((navItem) => (
+            navList.map((navItem, index) => (
               <NavigationMenuItem
-                key={navItem?.id}
+                key={index}
                 className={`${
-                  activeTab === navItem?.id
-                    ? "!text-primary-custom border-b border-primary-custom group"
+                  activeTab?.label === navItem?.label
+                    ? "!text-primary border-b border-primary group"
                     : ""
-                } !pb-2 box-border hover:border-b hover:border-primary-custom  h-10`}
+                } !pb-2 box-border hover:border-b hover:border-primary hover:text-primary h-10`}
               >
                 <NavigationMenuLink
-                  className={`flex hover:!bg-transparent items-center gap-2 ${navigationMenuTriggerStyle()} cursor-pointer`}
-                  onClick={() => handleClick(navItem?.id)}
+                  //  hover:!bg-transparent
+                  className={`flex items-center gap-2 ${navigationMenuTriggerStyle()} cursor-pointer`}
+                  onClick={() => handleActiveTab(navItem)}
                   {...props}
                 >
                   <span
                     className={`${
-                      activeTab === navItem?.id
-                        ? "group-hover:text-primary-custom"
+                      activeTab?.label === navItem?.label
+                        ? "group-hover:text-primary"
                         : ""
                     }`}
                   >
@@ -51,8 +50,8 @@ const NavigationCommon = ({
                   {(navItem?.count || navItem?.count === 0) && (
                     <span
                       className={`total-count mb-1 text-white w-6 h-6 flex items-center justify-center rounded-lg text-xs ${
-                        activeTab === navItem?.id
-                          ? "!bg-primary-custom"
+                        activeTab?.label === navItem?.label
+                          ? "!bg-primary"
                           : "bg-gray-300"
                       }`}
                     >

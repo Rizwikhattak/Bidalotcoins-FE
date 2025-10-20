@@ -24,17 +24,41 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/app/features/auth/authSlice";
 import { authRequiredRoutes } from "@/routes.js";
-
+import { APP_CONSTANTS } from "../../utils/Constants";
+import BidalotLogo from "@/assets/images/Bidalot-primary-logo-dark.png";
 const SidebarCommon = () => {
   const { state } = useSidebar();
   const dispatch = useDispatch();
 
   const auth = useSelector((state) => state.auth);
 
+  const LABEL_TO_GROUP_TITLE = {
+    [APP_CONSTANTS.DASHBOARD_LABEL]: "",
+    [APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL]: "Auction & Activities",
+    [APP_CONSTANTS.USERS_LABEL]: "Users",
+    [APP_CONSTANTS.HELP_AND_SUPPORT_LABEL]: "Help & Support",
+    [APP_CONSTANTS.SYSTEM_NOTIFICATIONS_LABEL]: "System & Notifications",
+  };
+
+  const customizedRoutes = groupRoutes(authRequiredRoutes);
+  console.log("customizedRoutes", customizedRoutes);
   const handleLogOutUser = () => {
     dispatch(logout());
   };
-
+  function groupRoutes(routes) {
+    const map = new Map();
+    routes.forEach((item) => {
+      if (!item.includeInSidebar) return;
+      if (!map.has(item.label)) {
+        map.set(item.label, {
+          title: LABEL_TO_GROUP_TITLE[item.label],
+          routes: [],
+        });
+      }
+      map.get(item.label).routes.push(item);
+    });
+    return Array.from(map.values());
+  }
   return (
     <>
       <Sidebar className="h-full " collapsible="icon">
@@ -42,19 +66,24 @@ const SidebarCommon = () => {
           <SidebarGroup>
             <SidebarMenu className="!gap-4">
               <SidebarMenuItem>
-                <ChevronsUp stroke="#1976D2" />
+                <img
+                  src={BidalotLogo}
+                  alt=""
+                  className="object-contain w-24 h-14"
+                />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu className="!gap-4">
-                {authRequiredRoutes.map((item) => {
-                  const isActive = location.pathname === item.path;
-                  return item.withSidebar ? (
-                    item.label === "dashboard" ? (
+          {customizedRoutes.map((group, index) => (
+            <SidebarGroup key={index}>
+              <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu className="!gap-1">
+                  {group.routes.map((item) => {
+                    const isActive = location.pathname === item.path;
+                    return (
                       <SidebarMenuItem key={item.name}>
                         <SidebarMenuButton
                           className="!px-6 !py-5 "
@@ -69,48 +98,12 @@ const SidebarCommon = () => {
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                    ) : (
-                      <></>
-                    )
-                  ) : (
-                    <></>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>Auction & Activities</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu className="!gap-4">
-                {authRequiredRoutes.map((item) => {
-                  const isActive = location.pathname === item.path;
-                  return item.withSidebar ? (
-                    item.label === "dashboard" ? (
-                      <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton
-                          className="!px-6 !py-5 "
-                          asChild
-                          isActive={isActive}
-                        >
-                          <Link to={item.path}>
-                            <span>
-                              <item.icon />
-                            </span>
-                            <span>{item.name}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ) : (
-                      <></>
-                    )
-                  ) : (
-                    <></>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>

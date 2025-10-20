@@ -8,10 +8,14 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.jsx";
 import { useLocation, Link } from "react-router-dom";
+import { authRequiredRoutes } from "../../routes";
 
 const HeaderCommon = () => {
   const { pathname } = useLocation();
-
+  const crumbs = authRequiredRoutes.find((routes) => {
+    return routes.path.includes(pathname);
+  });
+  console.log("crumbs", crumbs);
   return (
     <Breadcrumb>
       <BreadcrumbList>

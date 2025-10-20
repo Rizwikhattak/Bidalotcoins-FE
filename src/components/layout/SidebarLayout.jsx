@@ -33,9 +33,12 @@ const SidebarLayout = ({ children }) => {
           currentElement={currentElement}
           hadnleCurrentElement={(value) => setCurrentElement(value)}
         />
-        <main>
-          <SidebarTrigger />
-          {children}
+        <main className="w-full">
+          <div className="flex items-center ">
+            <SidebarTrigger />
+            <HeaderCommon />
+          </div>
+          <div className="p-7">{children}</div>
         </main>
         {/* <div
           className={`

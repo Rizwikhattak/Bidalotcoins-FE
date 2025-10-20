@@ -189,9 +189,9 @@ export function DataTableCommon({
         </div>
       )}
       <div className="rounded-md">
-        <ScrollArea className="h-[calc(100vh-250px)]   rounded-md flex-1">
+        <ScrollArea className="h-[calc(100vh-250px)] rounded-md flex-1">
           <Table>
-            <TableHeader className=" bg-gray-50">
+            <TableHeader className=" bg-sidebar py-5">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {

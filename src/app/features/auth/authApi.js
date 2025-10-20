@@ -24,7 +24,7 @@ export const authApi = api.injectEndpoints({
       },
     }),
   }),
-  overrideExisting: false,
+  overrideExisting: false, //If an endpoint with the same name already exists → keep the old one and ignore the new definition. Useful for production, to avoid accidentally overwriting working endpoints.
 });
 
 export const { useLoginUserMutation } = authApi;

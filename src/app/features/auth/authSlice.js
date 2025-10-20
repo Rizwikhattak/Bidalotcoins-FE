@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { APP_CONSTANTS } from "../../../utils/Constants";
 
 const initialState = {
-  user: null,
+  data: localStorage.getItem(APP_CONSTANTS.USER_CREDENTIALS)
+    ? JSON.parse(localStorage.getItem(APP_CONSTANTS.USER_CREDENTIALS))
+    : null,
   access_token: localStorage.getItem(APP_CONSTANTS.ACCESS_TOKEN) || null,
   refresh_token: localStorage.getItem(APP_CONSTANTS.REFRESH_TOKEN) || null,
 };
@@ -13,7 +15,7 @@ const authSlice = createSlice({
   reducers: {
     setAuthCredentials: (state, action) => {
       const { access_token, refresh_token, ...user } = action.payload.data;
-      state.user = user;
+      state.data = user;
       state.access_token = access_token || null;
       state.refresh_token = refresh_token || null;
       if (access_token)
@@ -27,7 +29,7 @@ const authSlice = createSlice({
         );
     },
     logout: (state) => {
-      state.user = null;
+      state.data = null;
       state.access_token = null;
       state.refresh_token = null;
       localStorage.removeItem(APP_CONSTANTS.ACCESS_TOKEN);
