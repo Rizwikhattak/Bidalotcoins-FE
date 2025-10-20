@@ -60,6 +60,9 @@ body {
   --sidebar-border: oklch(0.92 0 286.61);
   --sidebar-ring: oklch(0.71 0.01 286.09);
   --my-custom-color: hsl(120 50% 50%);
+  --user-status-active: #22c55e;
+  --user-status-invited: #e4e4e4;
+  --user-status-deactivated: #b90101;
   --font-sans: Montserrat, sans-serif;
   --font-serif: "Geist", "Geist Fallback", ui-serif, Georgia, Cambria,
     "Times New Roman", Times, serif;
@@ -115,6 +118,9 @@ body {
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.55 0.02 285.93);
   --my-custom-color: hsl(120 50% 50%);
+  --user-status-active: #22c55e;
+  --user-status-invited: #e4e4e4;
+  --user-status-deactivated: #b90101;
   --shadow-2xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0px oklch(0 0 0 / 0.1),
@@ -162,6 +168,9 @@ body {
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-my-custom: var(--my-custom-color);
+  --color-user-status-active: var(--user-status-active);
+  --color-user-status-invited: var(--user-status-invited);
+  --user-status-deactivated: var(--user-status-deactivated);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);

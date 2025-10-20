@@ -11,6 +11,9 @@ export const APP_CONSTANTS = {
   HELP_AND_SUPPORT_LABEL: "help_and_support",
   SYSTEM_NOTIFICATIONS_LABEL: "system_notifications",
   ADD_NEW_COIN_LABEL: "add_new_coin",
+  USER_INVIITED_STATUS: "Invited",
+  USER_ACTIVE_STATUS: "Active",
+  USER_DEACTIVATED_STATUS: "Deactivated",
 };
 
 export const GLOBAL_ROUTES = {

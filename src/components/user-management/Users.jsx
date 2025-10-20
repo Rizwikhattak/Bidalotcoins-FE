@@ -1,8 +1,28 @@
-import React from 'react'
+import React from "react";
 import { DataTableCommon } from "@/components/common/DataTableCommon";
 import { DataTableColumnHeaderCommon } from "@/components/common/DataTableColumnHeaderCommon";
+import { useGetUsersQuery } from "../../app/features/users/usersApi";
+import { formateDateTime } from "../../utils/Helpers";
+import { Button } from "../../../../../dext-dev/dext-dev/src/Component/ui/button";
+import { Edit, Trash } from "lucide-react";
+import ThreeDotsMenuIcon from "../icons/ThreeDotsMenuIcon";
+import { APP_CONSTANTS } from "../../utils/Constants";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 const Users = () => {
- const columns = [
+  const { data, error, isLoading } = useGetUsersQuery();
+  function getStatusColors(status) {
+    switch (status) {
+      case APP_CONSTANTS.USER_INVIITED_STATUS:
+        return "bg-user-status-invited";
+      case APP_CONSTANTS.USER_ACTIVE_STATUS:
+        return "bg-user-status-active";
+      case APP_CONSTANTS.USER_DEACTIVATED_STATUS:
+        return "bg-user-status-deactivated";
+      default:
+        return "bg-gray-200";
+    }
+  }
+  const columns = [
     // Checkbox Select Column
     // {
     //   id: "select",
@@ -37,125 +57,136 @@ const Users = () => {
     //   enableSorting: false,
     //   enableHiding: false,
     // },
-
-    // Bank Name
     {
-      accessorKey: "bank_name",
+      accessorKey: "full_name",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Bank Name" />
+        <DataTableColumnHeaderCommon
+          column={column}
+          title="Name"
+          className="ml-3"
+        />
       ),
-      enableSorting: false,
+      enableSorting: true,
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="Email" />
+      ),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "role",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="Role" />
+      ),
       cell: ({ row }) => {
-        const data = row.original;
-        return <span>{data?.bank?.name}</span>;
+        const role = row.getValue("role");
+        return <span className="capitalize">{role?.name}</span>;
       },
-    },
-
-    // Account Name
-    {
-      accessorKey: "account_name",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Account Name" />
-      ),
       enableSorting: true,
     },
-
-    // Account Number
     {
-      accessorKey: "account_no",
+      accessorKey: "created_at",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Account Number" />
-      ),
-      enableSorting: true,
-    },
-
-    // Account Type
-    {
-      accessorKey: "account_type",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Account Type" />
+        <DataTableColumnHeaderCommon column={column} title="Created At" />
       ),
       cell: ({ row }) => {
-        const type = row.getValue("account_type");
+        const dateTimeString = row.getValue("created_at");
+        return <span>{formateDateTime(dateTimeString)[0]}</span>;
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: "updated_at",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="Updated At" />
+      ),
+      cell: ({ row }) => {
+        const dateTimeString = row.getValue("updated_at");
+        return <span>{formateDateTime(dateTimeString)[0]}</span>;
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <div className="ml-2">
+          <DataTableColumnHeaderCommon column={column} title="Status" />
+        </div>
+      ),
+      cell: ({ row }) => {
+        const status = row.getValue("status");
         return (
-          <span
-            className={`capitalize px-2 py-1 rounded-xl ${
-              type?.toLocaleLowerCase()?.trim()?.replace(/\s+/g, "") ===
-              "personal"
-                ? "bg-[#EFF8FF] text-[#175CD3]"
-                : "bg-gray-100 text-gray-400"
-            }`}
+          <div
+            className={`${getStatusColors(
+              status
+            )} flex w-32 h-10 rounded-md text-base`}
           >
-            {type}
-          </span>
+            <span className="m-auto"> {status}</span>
+          </div>
         );
       },
       enableSorting: true,
     },
 
-    // Currency
-    {
-      accessorKey: "currency_code",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Currency" />
-      ),
-      enableSorting: true,
-      cell: ({ row }) => {
-        const data = row.original;
-        return <span>{data?.currency?.code}</span>;
-      },
-    },
-
     // Actions
-    // {
-    //   accessorKey: "actions",
-    //   header: "Actions",
-    //   id: "actions",
-    //   cell: ({ row }) => {
-    //     setSelectedRowData(row.original);
-    //     return (
-    //       <>
-    //         <div className="flex items-center gap-2">
-    //           <Button
-    //             variant="ghost"
-    //             className="text-gray-400 hover:text-red-600 p-1"
-    //             onClick={() => setOpenDeleteModal(true)}
-    //             disabled={!hasPermission(PERMISSIONS?.DELETE_BANK_ACCOUNT)}
-    //           >
-    //             <Trash className="h-4 w-4" />
-    //           </Button>
-    //           <Button
-    //             variant="ghost"
-    //             className="text-gray-400 hover:text-purple-600 p-1"
-    //             onClick={() => setOpenEditModal(true)}
-    //             disabled={!hasPermission(PERMISSIONS?.UPDATE_BANK_ACCOUNT)}
-    //           >
-    //             <Edit className="h-4 w-4" />
-    //           </Button>
-    //         </div>
-    //       </>
-    //     );
-    //   },
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      id: "actions",
+      cell: ({ row }) => {
+        // setSelectedRowData(row.original);
+        return (
+          <>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost">
+                  <ThreeDotsMenuIcon className="" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2">
+                <div className="flex flex-col gap-2 w-fit">
+                  <Button variant="ghost" className="justify-start ">
+                    Edit
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="justify-start w-fit text-red-500"
+                  >
+                    Delete User
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    },
   ];
   return (
-    <div>
-      <DataTableCommon
-        // filters={filters}
-        columns={columns}
-        data={[]}
-        isLoading={false}
-        // selectedFilter={selectedFilter}
-        // setSelectedFilter={setSelectedFilter}
-        // totalDataCount={bankAccountsData.count}
-        // onFetchData={(offset, limit) =>
-        //   dispatch(getAllBankAccounts({ offset, limit }))
-        // }
-      />
+    <section className="users-section">
+    <div className="filters-section">
+      
     </div>
+      <div>
+        <DataTableCommon
+          // filters={filters}
+          columns={columns}
+          data={data?.data || []}
+          isLoading={isLoading}
+          // selectedFilter={selectedFilter}
+          // setSelectedFilter={setSelectedFilter}
+          // totalDataCount={bankAccountsData.count}
+          // onFetchData={(offset, limit) =>
+          //   dispatch(getAllBankAccounts({ offset, limit }))
+          // }
+        />
+      </div>
+    </section>
   );
-}
+};
 
-export default Users
+export default Users;

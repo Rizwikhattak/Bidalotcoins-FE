@@ -154,7 +154,7 @@ export function DataTableCommon({
   });
 
   return (
-    <div className={`overflow-y-hidden mt-4 bg-white rounded-lg border`}>
+    <div className={`overflow-y-hidden mt-4  bg-white rounded-lg border`}>
       {/* py-2  px-5 */}
       {filters.length > 0 && (
         <div className="flex items-center p-2 justify-between gap-3">
@@ -191,7 +191,7 @@ export function DataTableCommon({
       <div className="rounded-md">
         <ScrollArea className="h-[calc(100vh-250px)] rounded-md flex-1">
           <Table>
-            <TableHeader className=" bg-sidebar py-5">
+            <TableHeader className=" bg-sidebar py-5 ">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
