@@ -15,19 +15,22 @@ import { cn } from "@/lib/utils";
  * - onOpenChange: function (called when the dialog should open/close)
  * - headerTitle, headerDescription, ModalStyle, children, etc.
  */
-const ModalCommon = ({
+const DialogCommon = ({
   open,
   onOpenChange,
   headerTitle,
   onCloseData,
   headerDescription,
-  ModalStyle = "",
+  className = "",
   children,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn("sm:max-w-[425px]", ModalStyle)}
+        className={cn(
+          "sm:max-w-[425px]  max-h-[90vh] overflow-y-auto",
+          className
+        )}
         onOpenChange={onOpenChange}
         onCloseData={onCloseData}
         onInteractOutside={(e) => {
@@ -45,4 +48,4 @@ const ModalCommon = ({
   );
 };
 
-export default ModalCommon;
+export default DialogCommon;

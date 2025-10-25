@@ -170,7 +170,7 @@ body {
   --color-my-custom: var(--my-custom-color);
   --color-user-status-active: var(--user-status-active);
   --color-user-status-invited: var(--user-status-invited);
-  --user-status-deactivated: var(--user-status-deactivated);
+  --color-user-status-deactivated: var(--user-status-deactivated);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);

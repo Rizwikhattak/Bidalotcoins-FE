@@ -1,15 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { DataTableCommon } from "@/components/common/DataTableCommon";
 import { DataTableColumnHeaderCommon } from "@/components/common/DataTableColumnHeaderCommon";
-import { useGetUsersQuery } from "../../app/features/users/usersApi";
+import {
+  useDeactivateUserMutation,
+  useGetUsersQuery,
+} from "../../app/features/users/usersApi";
 import { formateDateTime } from "../../utils/Helpers";
 import { Button } from "../../../../../dext-dev/dext-dev/src/Component/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Search, Trash } from "lucide-react";
 import ThreeDotsMenuIcon from "../icons/ThreeDotsMenuIcon";
 import { APP_CONSTANTS } from "../../utils/Constants";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
+import { SelectCommon } from "../common/FormCommons";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { userFilterScheema } from "./UserManagementScheema";
+import { Form } from "../ui/form";
+import SelectFiltersCommon from "../common/SelectFiltersCommon";
+import AddUpdateUser from "./AddUpdateUser";
+import DialogCommon from "../common/DialogCommon";
 const Users = () => {
-  const { data, error, isLoading } = useGetUsersQuery();
+  const { data, isLoading } = useGetUsersQuery();
+  const [deactivateUser, { isLoading: isDeactivateLoading }] =
+    useDeactivateUserMutation();
+  const [selectedRowData, setSelectedRowData] = useState(null);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   function getStatusColors(status) {
     switch (status) {
       case APP_CONSTANTS.USER_INVIITED_STATUS:
@@ -17,7 +39,7 @@ const Users = () => {
       case APP_CONSTANTS.USER_ACTIVE_STATUS:
         return "bg-user-status-active";
       case APP_CONSTANTS.USER_DEACTIVATED_STATUS:
-        return "bg-user-status-deactivated";
+        return "bg-user-status-deactivated text-background";
       default:
         return "bg-gray-200";
     }
@@ -147,14 +169,28 @@ const Users = () => {
               </PopoverTrigger>
               <PopoverContent className="w-auto p-2">
                 <div className="flex flex-col gap-2 w-fit">
-                  <Button variant="ghost" className="justify-start ">
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => {
+                      setSelectedRowData(row.original);
+                      setOpenDialog(true);
+                    }}
+                  >
                     Edit
                   </Button>
                   <Button
                     variant="ghost"
-                    className="justify-start w-fit text-red-500"
+                    className="justify-start w-fit text-user-status-deactivated  "
+                    onClick={() => {
+                      setSelectedRowData(row.original);
+                      setOpenDeleteDialog(true);
+                    }}
                   >
-                    Delete User
+                    {row.original?.status ===
+                    APP_CONSTANTS.USER_DEACTIVATED_STATUS
+                      ? "Reactivate User"
+                      : "Deactivate User"}
                   </Button>
                 </div>
               </PopoverContent>
@@ -168,9 +204,46 @@ const Users = () => {
   ];
   return (
     <section className="users-section">
-    <div className="filters-section">
-      
-    </div>
+      <div className="filters-section flex items-center gap-2 py-4">
+        <div className="flex-1 w-full flex items-center gap-3">
+          <div className="flex-1 max-w-md">
+            <InputGroup className="">
+              <InputGroupInput placeholder="Search users..." />
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+              <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+            </InputGroup>
+          </div>
+          <div>
+            <SelectFiltersCommon
+              placeholder="Status"
+              items={[
+                {
+                  value: "invited",
+                  name: "Invited",
+                },
+                {
+                  value: "active",
+                  name: "Active",
+                },
+                {
+                  value: "deactivated",
+                  name: "Deactivated",
+                },
+              ]}
+            />
+          </div>
+        </div>
+        <div>
+          <AddUpdateUser
+            selectedUser={selectedRowData}
+            setSelectedUser={setSelectedRowData}
+            openDialog={openDialog}
+            setOpenDialog={setOpenDialog}
+          />
+        </div>
+      </div>
       <div>
         <DataTableCommon
           // filters={filters}
@@ -185,6 +258,43 @@ const Users = () => {
           // }
         />
       </div>
+      {openDeleteDialog && (
+        <DialogCommon
+          headerTitle="Deactivate User"
+          open={openDeleteDialog}
+          onOpenChange={setOpenDeleteDialog}
+        >
+          <>
+            <p>
+              {selectedRowData?.status === APP_CONSTANTS.USER_DEACTIVATED_STATUS
+                ? "Are you sure you want to reactivate this user?"
+                : "Are you sure you want to deactivate this user?"}
+            </p>
+            <div className="flex items-center gap-2 justify-between pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setOpenDeleteDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  await deactivateUser(selectedRowData?.id);
+                  setSelectedRowData(null);
+                  setOpenDeleteDialog(false);
+                }}
+                isLoading={isDeactivateLoading}
+              >
+                {selectedRowData?.status ===
+                APP_CONSTANTS.USER_DEACTIVATED_STATUS
+                  ? "Reactivate User"
+                  : "Deactivate User"}
+              </Button>
+            </div>
+          </>
+        </DialogCommon>
+      )}
     </section>
   );
 };

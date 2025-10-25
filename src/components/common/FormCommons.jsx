@@ -34,7 +34,7 @@ import { Calendar } from "../ui/calendar";
 import SpinnerCommon from "./SpinnerCommon";
 import { Checkbox } from "../ui/checkbox";
 import { Input, InputPassword } from "../ui/input";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ChevronDown,
@@ -56,6 +56,7 @@ import { Progress } from "@/components/ui/progress";
 import { useDropzone } from "react-dropzone";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { TypographyMuted, TypographyP } from "./Typography";
+import { Textarea } from "../ui/textarea";
 // Spinner component
 const Spinner = ({ size = 16, className = "" }) => (
   <div
@@ -118,7 +119,7 @@ export const InputCommon = ({
                   : `space-y-[4px] ${!showErrorMessage ? "" : "mt-2"}`
               }`}
             >
-              <FormLabel htmlFor={name} className="font-medium text-base">
+              <FormLabel htmlFor={name} className="font-medium text-sm">
                 {label}
               </FormLabel>
               <FormControl>
@@ -146,6 +147,113 @@ export const InputCommon = ({
                   </div>
                 ) : !withIcon && !isLoading ? (
                   <Input
+                    id={name}
+                    type={inputType}
+                    placeholder={placeholder}
+                    aria-invalid={fieldState.error ? true : false}
+                    className={cn("!px-4 h-10 shadow-sm", className)}
+                    {...props}
+                    {...field}
+                    onBlur={(e) => {
+                      field.onBlur(e);
+                      onBlur?.(e);
+                    }}
+                    disabled={isLoading || props.disabled}
+                  />
+                ) : (
+                  <div
+                    className={`relative flex items-center ${
+                      isHalfWidth ? "!w-[50%]" : ""
+                    } `}
+                  >
+                    <Input
+                      id={name}
+                      type={inputType}
+                      placeholder={placeholder}
+                      aria-invalid={fieldState.error ? true : false}
+                      className={cn("!px-4 !h-10 shadow-sm pr-10", className)}
+                      {...props}
+                      {...field}
+                      onBlur={(e) => {
+                        field.onBlur(e);
+                        onBlur?.(e);
+                      }}
+                      disabled={isLoading || props.disabled}
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      {getInputIcon()}
+                    </div>
+                  </div>
+                )}
+              </FormControl>
+            </div>
+            {showErrorMessage && (
+              <div className="flex items-center gap-1">
+                {/* {fieldState.error ? Icon : null} */}
+                <FormMessage className="!p-0 !m-0" />
+              </div>
+            )}
+          </FormItem>
+        )}
+      />
+    </>
+  );
+};
+export const TextAreaCommon = ({
+  control,
+  name,
+  label,
+  placeholder,
+  inputType = "text",
+  formType = "normal",
+  className = "",
+  isHalfWidth = false,
+  Icon = (
+    <CircleAlert
+      color="red"
+      size={14}
+      className="mb-[2px]"
+      strokeWidth={1.65}
+    />
+  ),
+  placeholderIcon = <Search size={16} color="#9ca3af" strokeWidth={1.75} />,
+  withIcon = false,
+  showErrorMessage = true,
+  isLoading = false, // New loading prop
+  onBlur,
+  ...props
+}) => {
+  const { watch } = useFormContext();
+  const watchValue = watch(name);
+
+  // Determine what icon to show in the input
+  const getInputIcon = () => {
+    if (isLoading) {
+      return <Spinner size={16} className="text-gray-500" />;
+    }
+    return placeholderIcon;
+  };
+
+  return (
+    <>
+      <FormField
+        control={control}
+        name={name}
+        render={({ field, fieldState }) => (
+          <FormItem>
+            <div
+              className={`${
+                formType === "card"
+                  ? "flex items-center gap-2 "
+                  : `space-y-[4px] ${!showErrorMessage ? "" : "mt-2"}`
+              }`}
+            >
+              <FormLabel htmlFor={name} className="font-medium text-base">
+                {label}
+              </FormLabel>
+              <FormControl>
+                {!withIcon && !isLoading ? (
+                  <Textarea
                     id={name}
                     type={inputType}
                     placeholder={placeholder}
@@ -1201,30 +1309,36 @@ export const DatePickerCommon = ({
     />
   );
 };
-export const CheckboxCommon = ({ control, name, label, placeholder = "" }) => {
+// FormCommons.jsx (or wherever you keep it)
+
+export const CheckboxCommon = ({ control, name, label, value, fieldName }) => {
   return (
-    <>
-      <FormField
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <FormItem className="flex items-center gap-2">
-            <FormControl>
-              <Checkbox
-                checked={field.value}
-                onCheckedChange={field.onChange}
-                className="!mb-[2px]"
-              />
-            </FormControl>
-            <FormLabel className="!mt-0 cursor-pointer !text-sm">
-              {label}
-            </FormLabel>
-          </FormItem>
-        )}
-      />
-    </>
+    <FormField
+      control={control}
+      name={fieldName} // Use the array field name (e.g., "permissions")
+      render={({ field }) => (
+        <FormItem className="flex items-center gap-2">
+          <FormControl>
+            <Checkbox
+              checked={field.value?.includes(value)}
+              onCheckedChange={(checked) => {
+                const updatedValue = checked
+                  ? [...(field.value || []), value]
+                  : field.value?.filter((id) => id !== value);
+                field.onChange(updatedValue);
+              }}
+              className="!mb-[2px]"
+            />
+          </FormControl>
+          <FormLabel className="!mt-0 cursor-pointer !text-sm">
+            {label}
+          </FormLabel>
+        </FormItem>
+      )}
+    />
   );
 };
+
 export const FileUploadCommon = ({
   control,
   name,
@@ -2108,55 +2222,65 @@ export const SelectCommon = ({
   control,
   name,
   label,
-  items,
+  items = [],
   placeholder,
   formType = "normal",
-  style = "",
+  className = "",
   ...props
 }) => {
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
-        <FormItem
-          className={`${
-            formType === "card" ? "flex items-center gap-2" : "space-y-[4px]"
-          }`}
-        >
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              {...props}
-            >
-              <SelectTrigger
-                className={cn(
-                  "cursor-pointer hover:bg-primary-custom/5",
-                  style
-                )}
+      render={({ field }) => {
+        const selectedItem = items.find(
+          (item) => item.id === Number(field.value)
+        );
+        return (
+          <FormItem
+            className={`${
+              formType === "card"
+                ? "flex items-center gap-2"
+                : "space-y-[4px] mt-2"
+            }`}
+          >
+            <FormLabel>{label}</FormLabel>
+            <FormControl>
+              <Select
+                value={Number(field.value) || ""}
+                onValueChange={field.onChange}
+                {...props}
               >
-                <SelectValue placeholder={placeholder} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {items.map((item) => (
-                    <SelectItem
-                      key={item.value}
-                      value={item.value}
-                      className="cursor-pointer hover:bg-primary-custom/5"
-                    >
-                      {item.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
+                <SelectTrigger
+                  className={cn(
+                    "cursor-pointer hover:bg-primary-custom/5",
+                    className
+                  )}
+                >
+                  <SelectValue placeholder={placeholder}>
+                    {selectedItem ? selectedItem.name : placeholder}
+                  </SelectValue>
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    {items.map((item) => (
+                      <SelectItem
+                        key={item.id}
+                        value={Number(item.id)}
+                        className="cursor-pointer hover:bg-primary-custom/5"
+                      >
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 };

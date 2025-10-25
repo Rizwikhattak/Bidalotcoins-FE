@@ -46,6 +46,8 @@ export const GLOBAL_ROUTES = {
 
 export const RTK_TAGS = {
   USERS: "USERS",
+  ROLES: "ROLES",
+  PERMISSIONS: "PERMISSIONS",
 };
 
 export const API_URLS = {
@@ -55,4 +57,11 @@ export const API_URLS = {
 
   //User
   USERS: "user/v1/",
+  DEACTIVATE_USER: "user/v1/toggle/",
+
+  //Roles
+  ROLES: "user/v1/role/",
+
+  //Permissions
+  PERMISSIONS: "user/v1/permission/",
 };

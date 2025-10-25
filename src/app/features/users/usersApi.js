@@ -1,4 +1,4 @@
-import { API_URLS, RTK_TAGS } from "../../../utils/Constants";
+import { API_URLS, APP_CONSTANTS, RTK_TAGS } from "../../../utils/Constants";
 import { api } from "../../services/baseApi";
 
 //How RTK Query caches data internally
@@ -48,10 +48,24 @@ export const usersApi = api.injectEndpoints({
       }),
       invalidatesTags: [{ type: RTK_TAGS.USERS, id: "LIST" }],
     }),
+    //     Two ways to define invalidatesTags
+    //     (A) Static array invalidatesTags: [{ type: 'Products', id: 'LIST' }],
+    // Used when:
+    // You already know exactly which tags to invalidate.
+    // The invalidation does not depend on mutation parameters or results.
+    // (B) Dynamic function
+    // invalidatesTags: (result, error, { id }) => [
+    //   { type: 'Product', id },
+    //   { type: 'Products', id: 'LIST' },
+    // ],
+    // Used when:
+    // You need to use data from the mutation (like an id or other field).
+    // The tags to invalidate depend on the specific mutation’s context.
+
     // update
     updateUser: builder.mutation({
       query: ({ id, ...patch }) => ({
-        url: `${API_URLS.USERS}/${id}`,
+        url: `${API_URLS.USERS}?id=${id}`,
         method: "PATCH",
         body: patch,
       }),
@@ -89,6 +103,7 @@ export const usersApi = api.injectEndpoints({
         // 2) update the single-item cache
         const patchItem = dispatch(
           api.util.updateQueryData("getUser", id, (draft) => {
+            if (!draft) return;
             return null;
           })
         );
@@ -104,6 +119,41 @@ export const usersApi = api.injectEndpoints({
       // Also invalidate tags to be safe
       invalidatesTags: (result, error, id) => [
         { type: RTK_TAGS.USERS, id: "LIST" },
+        { type: RTK_TAGS.USERS, id: "LIST" },
+      ],
+    }),
+
+    deactivateUser: builder.mutation({
+      query: (id) => ({
+        url: `${API_URLS.DEACTIVATE_USER}?id=${id}`,
+        method: "DELETE",
+      }),
+      // async onQueryStarted(id, { dispatch, queryFulfilled }) {
+      //   const patchList = dispatch(
+      //     api.util.updateQueryData("getUsers", undefined, (draft) => {
+      //       console.log("DRAAAAAAAFT", draft);
+      //       if (!draft?.data) return;
+      //       const user = draft.data.find((item) => item.id === id);
+
+      //       if (user) user.status = APP_CONSTANTS.USER_DEACTIVATED_STATUS;
+      //     })
+      //   );
+      //   const patchItem = dispatch(
+      //     api.util.updateQueryData("getUser", undefined, (draft) => {
+      //       if (!draft.data) return;
+      //       const user = draft.data.find((item) => item.id === id);
+      //       if (user) user.status = APP_CONSTANTS.USER_DEACTIVATED_STATUS;
+      //     })
+      //   );
+      //   try {
+      //     await queryFulfilled;
+      //   } catch {
+      //     patchList.undo();
+      //     patchItem.undo();
+      //   }
+      // },
+      invalidatesTags: (result, error, id) => [
+        { type: RTK_TAGS.USERS, id },
         { type: RTK_TAGS.USERS, id: "LIST" },
       ],
     }),
@@ -127,6 +177,7 @@ export const {
   useGetUsersQuery,
   useAddUserMutation,
   useDeleteUserMutation,
+  useDeactivateUserMutation,
   useUpdateUserMutation,
 } = usersApi;
 

@@ -21,7 +21,7 @@ const Page = () => {
   return (
     <section className="lots-page w-full">
       <TypographyH1>User Management</TypographyH1>
-      <div>
+      <div className="pt-4">
         <NavigationCommon
           navList={navList}
           activeTab={activeTab}

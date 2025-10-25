@@ -38,7 +38,7 @@ const SidebarLayout = ({ children }) => {
             <SidebarTrigger />
             <HeaderCommon />
           </div>
-          <div className="p-7">{children}</div>
+          <div className="px-7 pt-3">{children}</div>
         </main>
         {/* <div
           className={`

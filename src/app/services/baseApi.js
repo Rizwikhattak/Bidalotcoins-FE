@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URLS } from "../../utils/Constants";
 import { logout, setAuthCredentials } from "../features/auth/authSlice";
+import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1/";
 
 // fetch base query is a wrapper around fetch that converts args into HTTP request like:
@@ -45,6 +46,30 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       api.dispatch(logout());
     }
   }
+
+  if (result?.error) {
+    const status = result.error.status;
+    const message =
+      result.error?.data?.message ||
+      result.error?.data?.detail ||
+      "An unexpected error occurred.";
+    console.error("message", message);
+    // show toast for all failed requests
+    toast.error(message);
+  }
+
+   if (
+    !result?.error &&
+    args?.method &&
+    ["POST", "PATCH", "DELETE"].includes(args.method.toUpperCase())
+  ) {
+    const message =
+      result.data?.message ||
+      result.data?.detail ||
+      "Action completed successfully!";
+    toast.success(message);
+  }
+
   return result;
 };
 
