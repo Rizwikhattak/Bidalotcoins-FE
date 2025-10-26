@@ -81,6 +81,7 @@ export const usersApi = api.injectEndpoints({
         method: "DELETE",
       }),
       // Optimistically remove from cache, revert if request fails
+      // async onQueryStarted(data, { dispatch, queryFulfilled }) data-> is which u passed which u gave as an argument while calling api
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
         // 1) update the list cache
         //You can only change RTK Query’s cache through dispatch, because that’s how Redux works — all state updates go through actions, lets you mutate the cached result of a query directly — synchronously and locally.
@@ -95,6 +96,7 @@ export const usersApi = api.injectEndpoints({
           // then you’d have to pass that same argument here:
           // api.util.updateQueryData("getUsers", { page: 1 }, (draft) => { ... })
           // RTK Query uses both the endpoint name and the argument to locate the right cache entry.
+          //Draft -> RTK Query internally stores your fetched data in its cache (using Immer, so you can mutate it directly).
           api.util.updateQueryData("getUsers", undefined, (draft) => {
             if (!draft?.data) return;
             draft.data = draft.data.filter((p) => p.id !== id);
@@ -135,14 +137,14 @@ export const usersApi = api.injectEndpoints({
       //       if (!draft?.data) return;
       //       const user = draft.data.find((item) => item.id === id);
 
-      //       if (user) user.status = APP_CONSTANTS.USER_DEACTIVATED_STATUS;
+      //       if (user) user.status = APP_CONSTANTS.DEACTIVATED_STATUS;
       //     })
       //   );
       //   const patchItem = dispatch(
       //     api.util.updateQueryData("getUser", undefined, (draft) => {
       //       if (!draft.data) return;
       //       const user = draft.data.find((item) => item.id === id);
-      //       if (user) user.status = APP_CONSTANTS.USER_DEACTIVATED_STATUS;
+      //       if (user) user.status = APP_CONSTANTS.DEACTIVATED_STATUS;
       //     })
       //   );
       //   try {

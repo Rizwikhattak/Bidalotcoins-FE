@@ -154,7 +154,7 @@ export function DataTableCommon({
   });
 
   return (
-    <div className={`overflow-y-hidden mt-4  bg-white rounded-lg border`}>
+    <div className={`overflow-y-hidden mt-4 rounded-lg border`}>
       {/* py-2  px-5 */}
       {filters.length > 0 && (
         <div className="flex items-center p-2 justify-between gap-3">
@@ -189,7 +189,7 @@ export function DataTableCommon({
         </div>
       )}
       <div className="rounded-md">
-        <ScrollArea className="h-[calc(100vh-250px)] rounded-md flex-1">
+        <ScrollArea className="h-[calc(100vh-300px)] rounded-md flex-1">
           <Table>
             <TableHeader className=" bg-sidebar py-5 ">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -249,7 +249,7 @@ export function DataTableCommon({
             </TableBody>
           </Table>
         </ScrollArea>
-        <div className="py-1 border-t bg-gray-50">
+        <div className="py-1 border-t ">
           <DataTablePaginationCommon
             table={table}
             pageIndex={pageIndex}

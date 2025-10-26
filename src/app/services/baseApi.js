@@ -14,7 +14,7 @@ const rawBaseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.access_token;
     if (token) headers.set("authorization", `Bearer ${token}`);
-    headers.set("content-type", "application/json");
+
     return headers;
   },
 });
@@ -58,7 +58,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     toast.error(message);
   }
 
-   if (
+  if (
     !result?.error &&
     args?.method &&
     ["POST", "PATCH", "DELETE"].includes(args.method.toUpperCase())

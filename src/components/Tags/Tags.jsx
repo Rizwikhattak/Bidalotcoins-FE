@@ -16,22 +16,25 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "../ui/input-group";
-import { SelectCommon } from "../common/FormCommons";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { userFilterScheema } from "./UserManagementScheema";
-import { Form } from "../ui/form";
 import SelectFiltersCommon from "../common/SelectFiltersCommon";
-import AddUpdateUser from "./AddUpdateUser";
+import AddUpdateTags from "./AddUpdateTags";
 import DialogCommon from "../common/DialogCommon";
-const Users = () => {
-  const { data, isLoading } = useGetUsersQuery();
-  const [deactivateUser, { isLoading: isDeactivateLoading }] =
-    useDeactivateUserMutation();
-  const [selectedRowData, setSelectedRowData] = useState(null);
-
-  const [openDialog, setOpenDialog] = useState(false);
+import {
+  useDeleteTagMutation,
+  useGetTagsQuery,
+  useUpdateTagMutation,
+} from "../../app/features/tags/tagsApi";
+const Tags = ({
+  selectedRowData,
+  setSelectedRowData,
+  openDialog,
+  setOpenDialog,
+}) => {
+  const { data, isLoading } = useGetTagsQuery();
+  const [deleteTag, { isLoading: isDeleteLoading }] = useDeleteTagMutation();
+  const [updateTag, { isLoading: isUpdateLoading }] = useUpdateTagMutation();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openDeactivateDialog, setOpenDeactivateDialog] = useState(false);
   function getStatusColors(status) {
     switch (status) {
       case APP_CONSTANTS.INVIITED_STATUS:
@@ -80,49 +83,38 @@ const Users = () => {
     //   enableHiding: false,
     // },
     {
-      accessorKey: "full_name",
+      accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeaderCommon
           column={column}
-          title="Name"
+          title="Tag Name"
           className="ml-3"
         />
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "email",
+      accessorKey: "color_code",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Email" />
-      ),
-      enableSorting: true,
-    },
-    {
-      accessorKey: "role",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Role" />
+        <DataTableColumnHeaderCommon column={column} title="Color Style" />
       ),
       cell: ({ row }) => {
-        const role = row.getValue("role");
-        return <span className="capitalize">{role?.name}</span>;
-      },
-      enableSorting: true,
-    },
-    {
-      accessorKey: "created_at",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Created At" />
-      ),
-      cell: ({ row }) => {
-        const dateTimeString = row.getValue("created_at");
-        return <span>{formateDateTime(dateTimeString)[0]}</span>;
+        const tagName = row.original?.name || "Dummy";
+        return (
+          <p
+            className={` border-[${row.original?.color_code}] p-2 rounded-2xl w-fit`}
+            style={{ backgroundColor: row.original?.color_code }}
+          >
+            {tagName}
+          </p>
+        );
       },
       enableSorting: true,
     },
     {
       accessorKey: "updated_at",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Updated At" />
+        <DataTableColumnHeaderCommon column={column} title="Last Updated" />
       ),
       cell: ({ row }) => {
         const dateTimeString = row.getValue("updated_at");
@@ -130,6 +122,14 @@ const Users = () => {
       },
       enableSorting: true,
     },
+    {
+      accessorKey: "assigned_items",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="Assigned Items" />
+      ),
+      enableSorting: true,
+    },
+
     {
       accessorKey: "status",
       header: ({ column }) => (
@@ -181,15 +181,29 @@ const Users = () => {
                   </Button>
                   <Button
                     variant="ghost"
+                    className={`justify-start w-fit ${
+                      row.original?.status === APP_CONSTANTS.INACTIVE_STATUS
+                        ? " text-user-status-active"
+                        : " text-user-status-deactivated "
+                    }  `}
+                    onClick={() => {
+                      setSelectedRowData(row.original);
+                      setOpenDeactivateDialog(true);
+                    }}
+                  >
+                    {row.original?.status === APP_CONSTANTS.INACTIVE_STATUS
+                      ? "Reactivate"
+                      : "Deactivate"}
+                  </Button>
+                  <Button
+                    variant="ghost"
                     className="justify-start w-fit text-user-status-deactivated  "
                     onClick={() => {
                       setSelectedRowData(row.original);
                       setOpenDeleteDialog(true);
                     }}
                   >
-                    {row.original?.status === APP_CONSTANTS.DEACTIVATED_STATUS
-                      ? "Reactivate User"
-                      : "Deactivate User"}
+                    Delete Tag
                   </Button>
                 </div>
               </PopoverContent>
@@ -203,43 +217,33 @@ const Users = () => {
   ];
   return (
     <section className="users-section">
-      <div className="filters-section flex items-center gap-2 py-4">
-        <div className="flex-1 w-full flex items-center gap-3">
-          <div className="flex-1 max-w-md">
-            <InputGroup className="">
-              <InputGroupInput placeholder="Search users..." />
-              <InputGroupAddon>
-                <Search />
-              </InputGroupAddon>
-              <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
-            </InputGroup>
-          </div>
-          <div>
-            <SelectFiltersCommon
-              placeholder="Status"
-              items={[
-                {
-                  value: "invited",
-                  name: "Invited",
-                },
-                {
-                  value: "active",
-                  name: "Active",
-                },
-                {
-                  value: "deactivated",
-                  name: "Deactivated",
-                },
-              ]}
-            />
-          </div>
+      <div className="filters-section flex items-center justify-between gap-2 py-4">
+        <div className="flex-1 max-w-md">
+          <InputGroup className="">
+            <InputGroupInput placeholder="Search users..." />
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+          </InputGroup>
         </div>
         <div>
-          <AddUpdateUser
-            selectedUser={selectedRowData}
-            setSelectedUser={setSelectedRowData}
-            openDialog={openDialog}
-            setOpenDialog={setOpenDialog}
+          <SelectFiltersCommon
+            placeholder="Status"
+            items={[
+              {
+                value: "invited",
+                name: "Invited",
+              },
+              {
+                value: "active",
+                name: "Active",
+              },
+              {
+                value: "deactivated",
+                name: "Deactivated",
+              },
+            ]}
           />
         </div>
       </div>
@@ -265,9 +269,8 @@ const Users = () => {
         >
           <>
             <p>
-              {selectedRowData?.status === APP_CONSTANTS.DEACTIVATED_STATUS
-                ? "Are you sure you want to reactivate this user?"
-                : "Are you sure you want to deactivate this user?"}
+              Are you sure you want to delete this Tag? This operation is
+              irreversible.
             </p>
             <div className="flex items-center gap-2 justify-between pt-4">
               <Button
@@ -279,15 +282,59 @@ const Users = () => {
               <Button
                 variant="destructive"
                 onClick={async () => {
-                  await deactivateUser(selectedRowData?.id);
+                  await deleteTag(selectedRowData?.id);
                   setSelectedRowData(null);
                   setOpenDeleteDialog(false);
                 }}
-                isLoading={isDeactivateLoading}
+                isLoading={isDeleteLoading}
               >
-                {selectedRowData?.status === APP_CONSTANTS.DEACTIVATED_STATUS
-                  ? "Reactivate User"
-                  : "Deactivate User"}
+                Delete Tag
+              </Button>
+            </div>
+          </>
+        </DialogCommon>
+      )}
+      {openDeactivateDialog && (
+        <DialogCommon
+          headerTitle="Deactivate User"
+          open={openDeactivateDialog}
+          onOpenChange={setOpenDeactivateDialog}
+        >
+          <>
+            <p>
+              {selectedRowData?.status === APP_CONSTANTS.DEACTIVATED_STATUS
+                ? "Are you sure you want to reactivate this tag?"
+                : "Are you sure you want to deactivate this tag?"}
+            </p>
+            <div className="flex items-center gap-2 justify-between pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setOpenDeactivateDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={
+                  selectedRowData?.status === APP_CONSTANTS.INACTIVE_STATUS
+                    ? "activate"
+                    : "destructive"
+                }
+                onClick={async () => {
+                  await updateTag({
+                    id: selectedRowData?.id,
+                    status:
+                      selectedRowData?.status === APP_CONSTANTS.INACTIVE_STATUS
+                        ? APP_CONSTANTS.ACTIVE_STATUS
+                        : APP_CONSTANTS.INACTIVE_STATUS,
+                  });
+                  setSelectedRowData(null);
+                  setOpenDeactivateDialog(false);
+                }}
+                isLoading={isUpdateLoading}
+              >
+                {selectedRowData?.status === APP_CONSTANTS.INACTIVE_STATUS
+                  ? "Activate Tag"
+                  : "Deactivate Tag"}
               </Button>
             </div>
           </>
@@ -297,4 +344,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Tags;

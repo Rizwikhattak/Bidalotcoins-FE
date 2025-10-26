@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-const emailSchema = z.string().email({ message: "Invalid Email Format" });
+const emailSchema = z.email({ message: "Invalid Email Format" });
+const forgetPasswordLinkSchema = z.object({
+  email: emailSchema,
+});
 const passwordSchema = z
   .string()
   .min(8, { message: "Password must be at least 8 characters" })
@@ -15,4 +18,4 @@ const loginSchema = z.object({
   // rememberMe: z.boolean().optional(),
 });
 
-export { loginSchema };
+export { loginSchema, forgetPasswordLinkSchema };

@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import DialogCommon from "../common/DialogCommon";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addRoleScheema } from "./UserManagementScheema";
-import { toast } from "sonner";
 import {
   CheckboxCommon,
   CheckboxGroupCardsCommon,
@@ -17,7 +16,6 @@ import {
   useGetPermissionsQuery,
   useUpdateRoleMutation,
 } from "../../app/features/roles/rolesApi";
-import { el } from "date-fns/locale";
 
 const AddUpdateRole = ({
   selectedRole,

@@ -24,12 +24,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/app/features/auth/authSlice";
 import { authRequiredRoutes } from "@/routes.js";
-import { APP_CONSTANTS } from "../../utils/Constants";
+import { APP_CONSTANTS, GLOBAL_ROUTES } from "../../utils/Constants";
 import BidalotLogo from "@/assets/images/Bidalot-primary-logo-dark.png";
+import { useLogoutUserMutation } from "../../app/features/auth/authApi";
 const SidebarCommon = () => {
   const { state } = useSidebar();
   const dispatch = useDispatch();
-
+  const [logoutUser] = useLogoutUserMutation();
+  const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
 
   const LABEL_TO_GROUP_TITLE = {
@@ -42,8 +44,14 @@ const SidebarCommon = () => {
 
   const customizedRoutes = groupRoutes(authRequiredRoutes);
   console.log("customizedRoutes", customizedRoutes);
-  const handleLogOutUser = () => {
-    dispatch(logout());
+  const handleLogOutUser = async () => {
+    try {
+      await logoutUser({ refresh_token: auth?.refresh_token });
+    } catch (err) {
+      console.error(err);
+    }
+
+    navigate(GLOBAL_ROUTES.ADMIN_LOGIN, { replace: true });
   };
   function groupRoutes(routes) {
     const map = new Map();

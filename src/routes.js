@@ -20,12 +20,32 @@ import UsersIcon from "./components/icons/UsersIcon.jsx";
 import FaqsIcon from "./components/icons/FaqsIcon.jsx";
 import NotificationsIcon from "./components/icons/NotificationsIcon.jsx";
 import AddNewLot from "./components/lot/AddNewLot.jsx";
+import ForgetPasswordPage1 from "./components/auth/ForgetPasswordPage1.jsx";
+import VerifyLinks from "./components/auth/VerifyLinks.jsx";
 // Public/auth routes (no authentication required)
 export const publicRoutes = [
   {
     path: GLOBAL_ROUTES.ADMIN_LOGIN,
     name: "Admin Login",
     component: AdminLoginPage,
+    protected: false,
+    withSidebar: false,
+    font: "admin-font",
+    isAdminRoute: true,
+  },
+  {
+    path: GLOBAL_ROUTES.ADMIN_FORGET_PASSWORD_ONE,
+    name: "Admin Forget Password Screen one",
+    component: ForgetPasswordPage1,
+    protected: false,
+    withSidebar: false,
+    font: "admin-font",
+    isAdminRoute: true,
+  },
+  {
+    path: GLOBAL_ROUTES.VERIFY_LINKS,
+    name: "Verify Links",
+    component: VerifyLinks,
     protected: false,
     withSidebar: false,
     font: "admin-font",

@@ -1,6 +1,6 @@
 import { API_URLS } from "../../../utils/Constants";
 import { api } from "../../services/baseApi";
-import { setAuthCredentials } from "./authSlice";
+import { logout, setAuthCredentials } from "./authSlice";
 
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -23,11 +23,33 @@ export const authApi = api.injectEndpoints({
         }
       },
     }),
+    logoutUser: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.USER_LOGOUT,
+        method: "POST",
+        body,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(logout());
+        } catch (err) {
+          console.error(err);
+        }
+      },
+    }),
+    sendForgetPasswordLink: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.USER_FORGET_PASSWORD_SEND_LINK,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
   overrideExisting: false, //If an endpoint with the same name already exists → keep the old one and ignore the new definition. Useful for production, to avoid accidentally overwriting working endpoints.
 });
 
-export const { useLoginUserMutation } = authApi;
+export const { useLoginUserMutation, useLogoutUserMutation,useSendForgetPasswordLinkMutation } = authApi;
 
 // src/features/api/userApi.js
 // import { api } from "../../services/baseApi"

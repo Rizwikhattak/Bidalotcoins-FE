@@ -5,6 +5,10 @@ import { useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 import SidebarCommon from "../common/SidebarCommon";
 import HeaderCommon from "../common/HeaderCommon";
+import { useTheme } from "../../hooks/useTheme";
+import { Switch } from "../ui/switch";
+import { APP_CONSTANTS } from "../../utils/Constants";
+import { Moon, Sun } from "lucide-react";
 
 const SidebarLayout = ({ children }) => {
   const location = useLocation();
@@ -13,6 +17,7 @@ const SidebarLayout = ({ children }) => {
   pathName = pathName.charAt(0).toUpperCase() + pathName.slice(1);
   const [currentElement, setCurrentElement] = useState(pathName);
   const { pathname } = useLocation();
+  const { theme, toggleTheme } = useTheme();
   // const breadcrumbs = getBreadcrumbs(pathname);
   // function getCookieValue(name) {
   //   const cookies = document.cookie.split("; ");
@@ -34,9 +39,42 @@ const SidebarLayout = ({ children }) => {
           hadnleCurrentElement={(value) => setCurrentElement(value)}
         />
         <main className="w-full">
-          <div className="flex items-center ">
-            <SidebarTrigger />
-            <HeaderCommon />
+          <div className="flex items-center justify-between gap-2 mr-4">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger />
+              <HeaderCommon />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="themeToggler"
+                checked={theme === APP_CONSTANTS.DARK_THEME}
+                onCheckedChange={toggleTheme}
+                className="relative overflow-hidden cursor-pointer"
+              >
+                {/* overlay icons */}
+                <Sun
+                  className={`absolute h-5 w-5 text-yellow-500 transition-all duration-300
+            ${
+              theme === APP_CONSTANTS.DARK_THEME
+                ? "opacity-0 scale-50"
+                : "opacity-100 scale-100"
+            }`}
+                />
+                <Moon
+                  className={`absolute h-5 w-5 text-blue-500 transition-all duration-300
+            ${
+              theme === APP_CONSTANTS.DARK_THEME
+                ? "opacity-100 scale-100"
+                : "opacity-0 scale-50"
+            }`}
+                />
+              </Switch>
+              <label htmlFor="themeToggler">
+                {theme === APP_CONSTANTS.DARK_THEME
+                  ? "Dark Mode"
+                  : "Light Mode"}
+              </label>
+            </div>
           </div>
           <div className="px-7 pt-3">{children}</div>
         </main>

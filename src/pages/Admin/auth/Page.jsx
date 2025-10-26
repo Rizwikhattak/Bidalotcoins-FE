@@ -2,7 +2,7 @@ import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { loginSchema } from "./AuthScheema";
+import { loginSchema } from "../../../components/auth/AuthScheema";
 import { InputCommon } from "../../../components/common/FormCommons";
 import AuthLayout from "../../../components/layout/AuthLayout";
 import { Button } from "../../../components/ui/button";
@@ -72,7 +72,9 @@ const AdminLoginPage = () => {
               <Label htmlFor="remember">Remember Me</Label>
             </div>
             <TypographyMuted className="text-primary">
-              <Link to="#">Forgot Password?</Link>
+              <Link to={GLOBAL_ROUTES.ADMIN_FORGET_PASSWORD_ONE}>
+                Forgot Password?
+              </Link>
             </TypographyMuted>
           </div>
           <Button type="submit" className="w-full mt-10" isLoading={isLoading}>
