@@ -153,6 +153,12 @@ const SidebarCommon = () => {
                       {/* <DropdownMenuShortcut>⌘S</DropdownMenuShortcut> */}
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      onClick={() => navigate(GLOBAL_ROUTES.EMBEDDER_PROGRAM)}
+                    >
+                      Embedder Program
+                      {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       onClick={handleLogOutUser}
                       className="text-red-600"
                     >

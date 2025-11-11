@@ -7,9 +7,9 @@ import {
 } from "../../app/features/users/usersApi";
 import { formateDateTime } from "../../utils/Helpers";
 import { Button } from "../../../../../dext-dev/dext-dev/src/Component/ui/button";
-import { Edit, Search, Trash } from "lucide-react";
+import { Edit, Search, Trash, Copy, Check } from "lucide-react";
 import ThreeDotsMenuIcon from "../icons/ThreeDotsMenuIcon";
-import { APP_CONSTANTS, GLOBAL_ROUTES } from "../../utils/Constants";
+import { APP_CONSTANTS } from "../../utils/Constants";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   InputGroup,
@@ -23,19 +23,57 @@ import {
   useGetTagsQuery,
   useUpdateTagMutation,
 } from "../../app/features/tags/tagsApi";
-import { useGetAuctionsQuery } from "../../app/features/auctions/auctionsApi";
-import { Link } from "react-router-dom";
-const Auctions = ({
+import { useGetEmbeddersQuery } from "../../app/features/embedder/embeddersApi";
+import { toast } from "sonner";
+
+// Animated Copy Button Component
+const CopyButton = ({ textToCopy }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopied(true);
+      toast.success("Copied to clipboard!");
+
+      // Reset back to copy icon after 2 seconds
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      toast.error("Failed to copy");
+    }
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={handleCopy}
+      className="h-8 w-8 transition-all"
+    >
+      {copied ? (
+        <Check className="h-4 w-4 text-green-600 animate-in zoom-in-50 duration-300" />
+      ) : (
+        <Copy className="h-4 w-4" />
+      )}
+    </Button>
+  );
+};
+
+const Embedder = ({
   selectedRowData,
   setSelectedRowData,
   openDialog,
   setOpenDialog,
 }) => {
-  const { data, isLoading } = useGetAuctionsQuery();
+  const { data, isLoading } = useGetEmbeddersQuery();
   const [deleteTag, { isLoading: isDeleteLoading }] = useDeleteTagMutation();
   const [updateTag, { isLoading: isUpdateLoading }] = useUpdateTagMutation();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openDeactivateDialog, setOpenDeactivateDialog] = useState(false);
+
   function getStatusColors(status) {
     switch (status) {
       case APP_CONSTANTS.INVIITED_STATUS:
@@ -50,197 +88,94 @@ const Auctions = ({
   }
 
   const columns = [
-    // Checkbox Select Column
-    // {
-    //   id: "select",
-    //   header: ({ table }) => (
-    //     <Checkbox
-    //       checked={
-    //         table.getIsAllPageRowsSelected()
-    //           ? true
-    //           : table.getIsSomePageRowsSelected()
-    //           ? "indeterminate"
-    //           : false
-    //       }
-    //       onCheckedChange={(value) =>
-    //         table.toggleAllPageRowsSelected(value === true)
-    //       }
-    //       aria-label="Select all"
-    //     />
-    //   ),
-    //   cell: ({ row }) => (
-    //     <Checkbox
-    //       checked={
-    //         row.getIsSelected()
-    //           ? true
-    //           : row.getIsSomeSelected()
-    //           ? "indeterminate"
-    //           : false
-    //       }
-    //       onCheckedChange={(value) => row.toggleSelected(value === true)}
-    //       aria-label="Select row"
-    //     />
-    //   ),
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
+    {
+      accessorKey: "filename",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon
+          column={column}
+          title="File Name"
+          className="ml-3"
+        />
+      ),
+      enableSorting: true,
+    },
     {
       accessorKey: "image",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon
-          column={column}
-          title="Image"
-          className="ml-3"
-        />
+        <DataTableColumnHeaderCommon column={column} title="Hotlink URL" />
       ),
       cell: ({ row }) => {
-        return (
-          <div className="w-12 h-12">
-            <img
-              src={row.getValue("image")}
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-        );
+        const hotlink = row.original?.image || "N/A";
+        return <span className="text-wrap">{hotlink}</span>;
       },
       enableSorting: false,
     },
-
     {
-      accessorKey: "title",
+      accessorKey: "created_at",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon
-          column={column}
-          title="Title"
-          className="ml-3"
-        />
+        <DataTableColumnHeaderCommon column={column} title="Upload Date" />
+      ),
+      cell: ({ row }) => {
+        const dateTimeString = row.getValue("created_at");
+        return <span>{dateTimeString}</span>;
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: "file_size",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="File Size" />
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "status",
+      accessorKey: "dimensions",
       header: ({ column }) => (
         <div className="ml-2">
-          <DataTableColumnHeaderCommon column={column} title="Status" />
+          <DataTableColumnHeaderCommon column={column} title="Dimensions" />
+        </div>
+      ),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "image",
+      header: ({ column }) => (
+        <div className="ml-2">
+          <DataTableColumnHeaderCommon column={column} title="Preview" />
         </div>
       ),
       cell: ({ row }) => {
-        const status = row.getValue("status");
-        return (
-          <div
-            className={`${getStatusColors(
-              status
-            )} flex w-32 h-10 rounded-md text-base`}
-          >
-            <span className="m-auto"> {status}</span>
-          </div>
-        );
+        const image = row.original?.image || "";
+        return <img src={image} className="w-12 h-12 object-contain" />;
       },
-      enableSorting: true,
+      enableSorting: false,
     },
     {
-      accessorKey: "total_bids",
+      accessorKey: "html_code",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Bids" />
-      ),
-
-      enableSorting: true,
-    },
-    {
-      accessorKey: "total_lots",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Total Coins" />
-      ),
-
-      enableSorting: true,
-    },
-    {
-      accessorKey: "start_date",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Live Date" />
+        <div className="ml-2">
+          <DataTableColumnHeaderCommon column={column} title="HTML Code" />
+        </div>
       ),
       cell: ({ row }) => {
-        const dateTimeString = row.getValue("start_date");
-        return <span>{formateDateTime(dateTimeString)[0]}</span>;
+        const htmlCode = row.original?.html_code || "";
+        return <p className="text-wrap">{htmlCode}</p>;
       },
-      enableSorting: true,
+      enableSorting: false,
     },
-    {
-      accessorKey: "end_date",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="End Date" />
-      ),
-      cell: ({ row }) => {
-        const dateTimeString = row.getValue("end_date");
-        return <span>{formateDateTime(dateTimeString)[0]}</span>;
-      },
-      enableSorting: true,
-    },
-
-    // Actions
+    // Actions with animated copy button
     {
       accessorKey: "actions",
       header: "Actions",
       id: "actions",
       cell: ({ row }) => {
-        // setSelectedRowData(row.original);
-        return (
-          <>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost">
-                  <ThreeDotsMenuIcon className="" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-2">
-                <div className="flex flex-col gap-2 w-fit">
-                  <Button
-                    variant="ghost"
-                    className="justify-start"
-                    onClick={() => {
-                      setSelectedRowData(row.original);
-                      setOpenDialog(true);
-                    }}
-                  >
-                    View Details
-                  </Button>
-                  <Link
-                    to={GLOBAL_ROUTES.ADMIN_UPDATE_AUCTION.split(
-                      ":id"
-                    )[0].concat(row.original?.id)}
-                    className="w-full justify-start"
-                  >
-                    <Button
-                      variant="ghost"
-                      className="justify-start w-full"
-                      onClick={() => {
-                        // setSelectedRowData(row.original);
-                        // setOpenDialog(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    className="justify-start text-user-status-deactivated  "
-                    onClick={() => {
-                      setSelectedRowData(row.original);
-                      setOpenDeleteDialog(true);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </>
-        );
+        return <CopyButton textToCopy={row.original?.html_code || ""} />;
       },
       enableSorting: false,
       enableHiding: false,
     },
   ];
+
   return (
     <section className="users-section">
       <div className="filters-section flex items-center justify-between gap-2 py-4">
@@ -275,16 +210,9 @@ const Auctions = ({
       </div>
       <div>
         <DataTableCommon
-          // filters={filters}
           columns={columns}
           data={data?.data || []}
           isLoading={isLoading}
-          // selectedFilter={selectedFilter}
-          // setSelectedFilter={setSelectedFilter}
-          // totalDataCount={bankAccountsData.count}
-          // onFetchData={(offset, limit) =>
-          //   dispatch(getAllBankAccounts({ offset, limit }))
-          // }
         />
       </div>
       {openDeleteDialog && (
@@ -370,4 +298,4 @@ const Auctions = ({
   );
 };
 
-export default Auctions;
+export default Embedder;

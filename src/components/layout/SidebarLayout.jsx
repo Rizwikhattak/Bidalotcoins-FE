@@ -38,7 +38,7 @@ const SidebarLayout = ({ children }) => {
           currentElement={currentElement}
           hadnleCurrentElement={(value) => setCurrentElement(value)}
         />
-        <main className="w-full">
+        <main className="w-full overflow-hidden">
           <div className="flex items-center justify-between gap-2 mr-4">
             <div className="flex items-center gap-2">
               <SidebarTrigger />
@@ -76,7 +76,7 @@ const SidebarLayout = ({ children }) => {
               </label>
             </div>
           </div>
-          <div className="px-7 pt-3">{children}</div>
+          <div className="px-7 pt-3 ">{children}</div>
         </main>
         {/* <div
           className={`

@@ -9,6 +9,7 @@ import BidingHistoryPage from "@/pages/Admin/biding-history/Page.jsx";
 import UserManagementPage from "@/pages/Admin/user-management/Page.jsx";
 import FaqsPage from "@/pages/Admin/faqs/Page.jsx";
 import NotificationsPage from "@/pages/Admin/notifications/Page.jsx";
+import EmbeddersPage from "@/pages/Admin/embedder/Page.jsx";
 
 import DashboardIcon from "./components/icons/DashboardIcon.jsx";
 import AuctionsIcon from "./components/icons/AuctionsIcon.jsx";
@@ -22,6 +23,7 @@ import NotificationsIcon from "./components/icons/NotificationsIcon.jsx";
 import AddNewLot from "./components/lot/AddNewLot.jsx";
 import ForgetPasswordPage1 from "./components/auth/ForgetPasswordPage1.jsx";
 import VerifyLinks from "./components/auth/VerifyLinks.jsx";
+import AddUpdateAuctions from "./components/auctions/AddUpdateAuctions.jsx";
 // Public/auth routes (no authentication required)
 export const publicRoutes = [
   {
@@ -74,6 +76,28 @@ export const authRequiredRoutes = [
     permission: null,
     withSidebar: true,
     includeInSidebar: true,
+  },
+  {
+    path: GLOBAL_ROUTES.ADMIN_ADD_AUCTION,
+    name: "Add new Auctions",
+    label: APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL,
+    icon: AuctionsIcon,
+    component: AddUpdateAuctions,
+    protected: true,
+    permission: null,
+    withSidebar: true,
+    includeInSidebar: false,
+  },
+  {
+    path: GLOBAL_ROUTES.ADMIN_UPDATE_AUCTION,
+    name: "Update Auction",
+    label: APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL,
+    icon: AuctionsIcon,
+    component: AddUpdateAuctions,
+    protected: true,
+    permission: null,
+    withSidebar: true,
+    includeInSidebar: false,
   },
   {
     path: GLOBAL_ROUTES.ADMIN_LOTS,
@@ -162,6 +186,17 @@ export const authRequiredRoutes = [
     permission: null,
     withSidebar: true,
     includeInSidebar: true,
+  },
+  {
+    path: GLOBAL_ROUTES.EMBEDDER_PROGRAM,
+    name: "Embedder",
+    label: APP_CONSTANTS.EMBEDDER_LABEL,
+    icon: null,
+    component: EmbeddersPage,
+    protected: true,
+    permission: null,
+    withSidebar: true,
+    includeInSidebar: false,
   },
 ];
 

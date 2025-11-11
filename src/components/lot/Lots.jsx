@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { DataTableCommon } from "../common/DataTableCommon";
 import { DataTableColumnHeaderCommon } from "../common/DataTableColumnHeaderCommon";
+import LotsFilterCommon from "./LotsFilterCommon";
+import { GLOBAL_ROUTES } from "../../utils/Constants";
+import { formateDateTime } from "../../utils/Helpers";
+import { useGetLotsQuery } from "../../app/features/lots/lotsApi";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import ThreeDotsMenuIcon from "../icons/ThreeDotsMenuIcon";
+import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
 
-const Lots = () => {
+const Lots = ({ status }) => {
+  const { data, isLoading } = useGetLotsQuery({status:"auction"});
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
   const columns = [
     // Checkbox Select Column
     // {
@@ -38,124 +50,191 @@ const Lots = () => {
     //   enableSorting: false,
     //   enableHiding: false,
     // },
-
-    // Bank Name
     {
-      accessorKey: "bank_name",
+      accessorKey: "front_image",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Bank Name" />
-      ),
-      enableSorting: false,
-      cell: ({ row }) => {
-        const data = row.original;
-        return <span>{data?.bank?.name}</span>;
-      },
-    },
-
-    // Account Name
-    {
-      accessorKey: "account_name",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Account Name" />
-      ),
-      enableSorting: true,
-    },
-
-    // Account Number
-    {
-      accessorKey: "account_no",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Account Number" />
-      ),
-      enableSorting: true,
-    },
-
-    // Account Type
-    {
-      accessorKey: "account_type",
-      header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Account Type" />
+        <DataTableColumnHeaderCommon
+          column={column}
+          title="Image"
+          className="ml-3"
+        />
       ),
       cell: ({ row }) => {
-        const type = row.getValue("account_type");
         return (
-          <span
-            className={`capitalize px-2 py-1 rounded-xl ${
-              type?.toLocaleLowerCase()?.trim()?.replace(/\s+/g, "") ===
-              "personal"
-                ? "bg-[#EFF8FF] text-[#175CD3]"
-                : "bg-gray-100 text-gray-400"
-            }`}
-          >
-            {type}
-          </span>
+          <div className="w-12 h-12">
+            <img
+              src={row.getValue("front_image")}
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
         );
       },
+      enableSorting: false,
+    },
+
+    {
+      accessorKey: "title",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon
+          column={column}
+          title="Title"
+          className="ml-3"
+        />
+      ),
       enableSorting: true,
     },
 
-    // Currency
     {
-      accessorKey: "currency_code",
+      accessorKey: "description",
       header: ({ column }) => (
-        <DataTableColumnHeaderCommon column={column} title="Currency" />
+        <DataTableColumnHeaderCommon column={column} title="Description" />
       ),
+
+      enableSorting: false,
+    },
+    {
+      accessorKey: "year",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="year" />
+      ),
+
       enableSorting: true,
+    },
+    {
+      accessorKey: "country",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="Country" />
+      ),
       cell: ({ row }) => {
-        const data = row.original;
-        return <span>{data?.currency?.code}</span>;
+        const country = row.getValue("country");
+        return <span>{country?.name || "N/A"}</span>;
       },
+      enableSorting: true,
+    },
+    {
+      accessorKey: "weight",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="Weight" />
+      ),
+
+      enableSorting: true,
+    },
+    {
+      accessorKey: "tag",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="Tag" />
+      ),
+      cell: ({ row }) => {
+        const tag = row.getValue("tag");
+        return <span>{tag?.name || "N/A"}</span>;
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: "auction",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon column={column} title="Auction Title" />
+      ),
+      cell: ({ row }) => {
+        const auction = row.getValue("auction");
+        return <span>{auction?.auction_name || "N/A"}</span>;
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: "auctions_attended",
+      header: ({ column }) => (
+        <DataTableColumnHeaderCommon
+          column={column}
+          title="Auctions Attended"
+        />
+      ),
+
+      enableSorting: true,
     },
 
     // Actions
-    // {
-    //   accessorKey: "actions",
-    //   header: "Actions",
-    //   id: "actions",
-    //   cell: ({ row }) => {
-    //     setSelectedRowData(row.original);
-    //     return (
-    //       <>
-    //         <div className="flex items-center gap-2">
-    //           <Button
-    //             variant="ghost"
-    //             className="text-gray-400 hover:text-red-600 p-1"
-    //             onClick={() => setOpenDeleteModal(true)}
-    //             disabled={!hasPermission(PERMISSIONS?.DELETE_BANK_ACCOUNT)}
-    //           >
-    //             <Trash className="h-4 w-4" />
-    //           </Button>
-    //           <Button
-    //             variant="ghost"
-    //             className="text-gray-400 hover:text-purple-600 p-1"
-    //             onClick={() => setOpenEditModal(true)}
-    //             disabled={!hasPermission(PERMISSIONS?.UPDATE_BANK_ACCOUNT)}
-    //           >
-    //             <Edit className="h-4 w-4" />
-    //           </Button>
-    //         </div>
-    //       </>
-    //     );
-    //   },
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      id: "actions",
+      cell: ({ row }) => {
+        // setSelectedRowData(row.original);
+        return (
+          <>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost">
+                  <ThreeDotsMenuIcon className="" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2">
+                <div className="flex flex-col gap-2 w-fit">
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => {
+                      setSelectedRowData(row.original);
+                      setOpenDialog(true);
+                    }}
+                  >
+                    View Details
+                  </Button>
+                  <Link
+                    to={GLOBAL_ROUTES.ADMIN_UPDATE_AUCTION.split(
+                      ":id"
+                    )[0].concat(row.original?.id)}
+                    className="w-full justify-start"
+                  >
+                    <Button
+                      variant="ghost"
+                      className="justify-start w-full"
+                      onClick={() => {
+                        // setSelectedRowData(row.original);
+                        // setOpenDialog(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-user-status-deactivated  "
+                    onClick={() => {
+                      setSelectedRowData(row.original);
+                      setOpenDeleteDialog(true);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    },
   ];
   return (
-    <div>
-      <DataTableCommon
-        // filters={filters}
-        columns={columns}
-        data={[]}
-        isLoading={false}
-        // selectedFilter={selectedFilter}
-        // setSelectedFilter={setSelectedFilter}
-        // totalDataCount={bankAccountsData.count}
-        // onFetchData={(offset, limit) =>
-        //   dispatch(getAllBankAccounts({ offset, limit }))
-        // }
-      />
-    </div>
+    <section className="lots-section">
+      <LotsFilterCommon />
+      <div>
+        <DataTableCommon
+          // filters={filters}
+          columns={columns}
+          data={data?.data || []}
+          isLoading={isLoading}
+          // selectedFilter={selectedFilter}
+          // setSelectedFilter={setSelectedFilter}
+          // totalDataCount={bankAccountsData.count}
+          // onFetchData={(offset, limit) =>
+          //   dispatch(getAllBankAccounts({ offset, limit }))
+          // }
+        />
+      </div>
+    </section>
   );
 };
 

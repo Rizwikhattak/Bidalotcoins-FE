@@ -6,6 +6,7 @@ export const APP_CONSTANTS = {
   DARK_THEME: "dark",
   LIGHT_THEME: "light",
   DASHBOARD_LABEL: "dashboard",
+  EMBEDDER_LABEL: "embedder",
   AUCTIONS_ACTIVITIES_LABEL: "auctions_activities",
   USERS_LABEL: "users",
   HELP_AND_SUPPORT_LABEL: "help_and_support",
@@ -23,6 +24,8 @@ export const GLOBAL_ROUTES = {
   ADMIN_FORGET_PASSWORD_ONE: "/admin/forget-password",
   ADMIN_DASHBOARD: "/admin/dashboard",
   ADMIN_AUCTIONS: "/admin/auctions",
+  ADMIN_ADD_AUCTION: "/admin/auctions/add-new-auction",
+  ADMIN_UPDATE_AUCTION: "/admin/auctions/update-auction/:id",
   ADMIN_LOTS: "/admin/lots",
   ADMIN_ADD_LOT: "/admin/lots/add-new-coin",
   ADMIN_LIVE_SESSIONS: "/admin/live-sessions",
@@ -32,6 +35,7 @@ export const GLOBAL_ROUTES = {
   ADMIN_FAQS: "/admin/faqs",
   ADMIN_NOTIFICATIONS: "/admin/notifications",
   VERIFY_LINKS: "/verify-link/",
+  EMBEDDER_PROGRAM: "/embedder/",
 
   // ================= CUSTOMER =================
   HOME: "/",
@@ -53,6 +57,9 @@ export const RTK_TAGS = {
   PERMISSIONS: "PERMISSIONS",
   TAGS: "TAGS",
   AUCTIONS: "AUCTIONS",
+  LOTS: "LOTS",
+  COUNTRY: "COUNTRY",
+  EMBEDDER: "EMBEDDER",
 };
 
 export const API_URLS = {
@@ -75,4 +82,13 @@ export const API_URLS = {
 
   //Auctions
   AUCTIONS: "marketplace/v1/auction/",
+
+  // lots
+  LOTS: "marketplace/v1/lot/",
+
+  //Commons
+  COUNTRIES: "misc/v1/country/",
+
+  //Embedder
+  EMBEDDER: "misc/v1/hotlink/",
 };

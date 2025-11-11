@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import {
   FormControl,
   FormField,
@@ -34,7 +34,7 @@ import { Calendar } from "../ui/calendar";
 import SpinnerCommon from "./SpinnerCommon";
 import { Checkbox } from "../ui/checkbox";
 import { Input, InputPassword } from "../ui/input";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ChevronDown,
@@ -57,6 +57,7 @@ import { useDropzone } from "react-dropzone";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { TypographyMuted, TypographyP } from "./Typography";
 import { Textarea } from "../ui/textarea";
+import { motion, AnimatePresence } from "framer-motion";
 // Spinner component
 const Spinner = ({ size = 16, className = "" }) => (
   <div
@@ -116,12 +117,10 @@ export const InputCommon = ({
               className={`${
                 formType === "card"
                   ? "flex items-center gap-2 "
-                  : `space-y-[4px] ${!showErrorMessage ? "" : "mt-2"}`
+                  : `space-y-[7px] ${!showErrorMessage ? "" : "mt-2"}`
               }`}
             >
-              <FormLabel htmlFor={name} className="font-medium text-sm">
-                {label}
-              </FormLabel>
+              <FormLabel htmlFor={name}>{label}</FormLabel>
               <FormControl>
                 {inputType === "password" ? (
                   <div className="relative">
@@ -248,9 +247,7 @@ export const TextAreaCommon = ({
                   : `space-y-[4px] ${!showErrorMessage ? "" : "mt-2"}`
               }`}
             >
-              <FormLabel htmlFor={name} className="font-medium text-base">
-                {label}
-              </FormLabel>
+              <FormLabel htmlFor={name}>{label}</FormLabel>
               <FormControl>
                 {!withIcon && !isLoading ? (
                   <Textarea
@@ -927,7 +924,7 @@ export const ComboboxCommon = ({
         // Find selected item safely
 
         return (
-          <FormItem className="space-y-[4px] mt-2 flex flex-col">
+          <FormItem>
             {label && <FormLabel>{label}</FormLabel>}
             <FormControl>
               <Popover
@@ -936,7 +933,7 @@ export const ComboboxCommon = ({
                   setOpen(newOpen);
                 }}
               >
-                <PopoverTrigger asChild className="mt-2">
+                <PopoverTrigger asChild className="">
                   <Button
                     variant="outline"
                     role="combobox"
@@ -1086,169 +1083,216 @@ export const ComboboxCommon = ({
   );
 };
 
-export function DateTimePickerCommon({
-  form,
+export const DateTimePickerCommon = ({
   control,
   name,
-  label,
-  style,
-  placeholder = "",
-}) {
-  function handleDateSelect(date) {
-    if (date) {
-      form.setValue("time", date);
-    }
-  }
+  label = "Date & Time",
+  placeholder = "MM/DD/YYYY hh:mm aa",
+  formType = "normal",
+  className = "",
+  Icon = <CircleAlert color="red" size={20} />,
+  showErrorMessage = true,
+  ...props
+}) => {
+  const [isOpen, setIsOpen] = React.useState(false);
 
-  function handleTimeChange(type, value) {
-    const currentDate = form.getValues("time") || new Date();
-    let newDate = new Date(currentDate);
+  const hours = Array.from({ length: 12 }, (_, i) => i + 1);
+
+  const handleDateSelect = (selectedDate, field) => {
+    if (selectedDate) {
+      // If there's already a date with time, preserve the time
+      if (field.value) {
+        const newDate = new Date(selectedDate);
+        newDate.setHours(field.value.getHours());
+        newDate.setMinutes(field.value.getMinutes());
+        field.onChange(newDate);
+      } else {
+        // Set default time to current time
+        const newDate = new Date(selectedDate);
+        const now = new Date();
+        newDate.setHours(now.getHours());
+        newDate.setMinutes(now.getMinutes());
+        field.onChange(newDate);
+      }
+    }
+  };
+
+  const handleTimeChange = (type, value, field) => {
+    const date = field.value || new Date();
+    const newDate = new Date(date);
 
     if (type === "hour") {
-      const hour = parseInt(value, 10);
-      newDate.setHours(newDate.getHours() >= 12 ? hour + 12 : hour);
+      const hour = parseInt(value);
+      const isPM = newDate.getHours() >= 12;
+      newDate.setHours((hour % 12) + (isPM ? 12 : 0));
     } else if (type === "minute") {
-      newDate.setMinutes(parseInt(value, 10));
+      newDate.setMinutes(parseInt(value));
     } else if (type === "ampm") {
-      const hours = newDate.getHours();
-      if (value === "AM" && hours >= 12) {
-        newDate.setHours(hours - 12);
-      } else if (value === "PM" && hours < 12) {
-        newDate.setHours(hours + 12);
+      const currentHours = newDate.getHours();
+      if (value === "PM" && currentHours < 12) {
+        newDate.setHours(currentHours + 12);
+      } else if (value === "AM" && currentHours >= 12) {
+        newDate.setHours(currentHours - 12);
       }
     }
 
-    form.setValue("time", newDate);
-  }
+    field.onChange(newDate);
+  };
 
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
-        <FormItem className="flex flex-col mt-2">
-          <FormLabel>{label}</FormLabel>
-          <Popover modal>
-            <PopoverTrigger className={cn(style, "")} asChild>
-              <FormControl>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full pl-3 text-left font-normal",
-                    !field.value && "text-muted-foreground"
-                  )}
-                >
-                  {field.value ? (
-                    format(field.value, "MM/dd/yyyy hh:mm aa")
-                  ) : (
-                    <span>MM/DD/YYYY hh:mm aa</span>
-                  )}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </FormControl>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <div className="sm:flex">
-                <Calendar
-                  mode="single"
-                  selected={field.value}
-                  onSelect={handleDateSelect}
-                  initialFocus
-                />
-                <div
-                  className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x"
-                  onPointerDown={(e) => e.stopPropagation()}
-                >
-                  <ScrollArea className="w-64 sm:w-auto">
-                    <div className="flex sm:flex-col p-2">
-                      {Array.from({ length: 12 }, (_, i) => i + 1)
-                        .reverse()
-                        .map((hour) => (
-                          <Button
-                            key={hour}
-                            size="icon"
-                            type="button"
-                            variant={
-                              field.value &&
-                              field.value.getHours() % 12 === hour % 12
-                                ? "default"
-                                : "ghost"
-                            }
-                            className="sm:w-full shrink-0 aspect-square"
-                            onClick={() =>
-                              handleTimeChange("hour", hour.toString())
-                            }
-                          >
-                            {hour}
-                          </Button>
-                        ))}
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <div
+            className={`${
+              formType === "card"
+                ? "flex items-center gap-2"
+                : `space-y-[4px] ${!showErrorMessage ? "" : "mt-2"}`
+            }`}
+          >
+            <FormLabel htmlFor={name}>{label}</FormLabel>
+            <FormControl>
+              <Popover open={isOpen} onOpenChange={setIsOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal h-10",
+                      !field.value && "text-muted-foreground",
+                      fieldState.error && "border-destructive",
+                      className
+                    )}
+                    aria-invalid={fieldState.error ? true : false}
+                    {...props}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {field.value ? (
+                      format(field.value, "MM/dd/yyyy hh:mm aa")
+                    ) : (
+                      <span>{placeholder}</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <div className="sm:flex">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(date) => handleDateSelect(date, field)}
+                      initialFocus
+                    />
+                    <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
+                      {/* Hours */}
+                      <ScrollArea className="w-64 sm:w-auto">
+                        <div className="flex sm:flex-col p-2">
+                          {hours.reverse().map((hour) => (
+                            <Button
+                              key={hour}
+                              size="icon"
+                              type="button"
+                              variant={
+                                field.value &&
+                                field.value.getHours() % 12 === hour % 12
+                                  ? "default"
+                                  : "ghost"
+                              }
+                              className="sm:w-full shrink-0 aspect-square"
+                              onClick={() =>
+                                handleTimeChange("hour", hour.toString(), field)
+                              }
+                            >
+                              {hour}
+                            </Button>
+                          ))}
+                        </div>
+                        <ScrollBar
+                          orientation="horizontal"
+                          className="sm:hidden"
+                        />
+                      </ScrollArea>
+
+                      {/* Minutes */}
+                      <ScrollArea className="w-64 sm:w-auto">
+                        <div className="flex sm:flex-col p-2">
+                          {Array.from({ length: 12 }, (_, i) => i * 5).map(
+                            (minute) => (
+                              <Button
+                                key={minute}
+                                size="icon"
+                                type="button"
+                                variant={
+                                  field.value &&
+                                  field.value.getMinutes() === minute
+                                    ? "default"
+                                    : "ghost"
+                                }
+                                className="sm:w-full shrink-0 aspect-square"
+                                onClick={() =>
+                                  handleTimeChange(
+                                    "minute",
+                                    minute.toString(),
+                                    field
+                                  )
+                                }
+                              >
+                                {minute.toString().padStart(2, "0")}
+                              </Button>
+                            )
+                          )}
+                        </div>
+                        <ScrollBar
+                          orientation="horizontal"
+                          className="sm:hidden"
+                        />
+                      </ScrollArea>
+
+                      {/* AM/PM */}
+                      <ScrollArea className="">
+                        <div className="flex sm:flex-col p-2">
+                          {["AM", "PM"].map((ampm) => (
+                            <Button
+                              key={ampm}
+                              size="icon"
+                              type="button"
+                              variant={
+                                field.value &&
+                                ((ampm === "AM" &&
+                                  field.value.getHours() < 12) ||
+                                  (ampm === "PM" &&
+                                    field.value.getHours() >= 12))
+                                  ? "default"
+                                  : "ghost"
+                              }
+                              className="sm:w-full shrink-0 aspect-square"
+                              onClick={() =>
+                                handleTimeChange("ampm", ampm, field)
+                              }
+                            >
+                              {ampm}
+                            </Button>
+                          ))}
+                        </div>
+                      </ScrollArea>
                     </div>
-                    <ScrollBar orientation="horizontal" className="sm:hidden" />
-                  </ScrollArea>
-                  <ScrollArea className="w-64 sm:w-auto">
-                    <div className="flex sm:flex-col p-2">
-                      {Array.from({ length: 12 }, (_, i) => i * 5).map(
-                        (minute) => (
-                          <Button
-                            key={minute}
-                            size="icon"
-                            type="button"
-                            variant={
-                              field.value && field.value.getMinutes() === minute
-                                ? "default"
-                                : "ghost"
-                            }
-                            className="sm:w-full shrink-0 aspect-square"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTimeChange("minute", minute.toString());
-                            }}
-                          >
-                            {minute.toString().padStart(2, "0")}
-                          </Button>
-                        )
-                      )}
-                    </div>
-                    <ScrollBar orientation="horizontal" className="sm:hidden" />
-                  </ScrollArea>
-                  <ScrollArea className="">
-                    <div className="flex sm:flex-col p-2">
-                      {["AM", "PM"].map((ampm) => (
-                        <Button
-                          key={ampm}
-                          size="icon"
-                          type="button"
-                          variant={
-                            field.value &&
-                            ((ampm === "AM" && field.value.getHours() < 12) ||
-                              (ampm === "PM" && field.value.getHours() >= 12))
-                              ? "default"
-                              : "ghost"
-                          }
-                          className="sm:w-full shrink-0 aspect-square"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleTimeChange("ampm", ampm);
-                          }}
-                        >
-                          {ampm}
-                        </Button>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-          {/* <FormDescription>
-            Please select your preferred date and time.
-          </FormDescription> */}
-          <FormMessage />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </FormControl>
+          </div>
+          {showErrorMessage && (
+            <div className="flex items-center gap-2">
+              {fieldState.error ? Icon : null}
+              <FormMessage />
+            </div>
+          )}
         </FormItem>
       )}
     />
   );
-}
+};
 export const DatePickerCommon = ({
   control,
   formType = "normal",
@@ -1342,25 +1386,95 @@ export const CheckboxCommon = ({ control, name, label, value, fieldName }) => {
 export const FileUploadCommon = ({
   control,
   name,
-  accept = "image/jpeg,image/png,application/pdf",
+  accept = "image/jpeg,image/png,image/jpg",
+  title = "Upload Banner Image",
+  label,
+  maxFiles = 1, // Single or multiple
+  maxSize = 5, // Max size in MB
+  showPreview = true, // Show image preview
+  className = "",
 }) => {
   const [files, setFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState({});
   const [error, setError] = useState("");
+  const [hoveredIndex, setHoveredIndex] = useState(null);
   const { setValue, setError: setFormError, clearErrors } = useFormContext();
-  const MAX_FILES = 1;
 
-  // Parse acceptable file types into user-friendly format
-  const acceptedFileTypes = React.useMemo(() => {
+  const watchedValue = useWatch({ control, name });
+
+  const isMultiple = maxFiles > 1;
+  const maxSizeBytes = maxSize * 1024 * 1024;
+  const inputRef = useRef(null);
+  const [replaceIndex, setReplaceIndex] = useState(null);
+
+  useEffect(() => {
+    // if nothing set, do nothing (user can still add files)
+    if (!watchedValue) return;
+
+    // Helper to build a "file-like" object used by this component
+    const makeRemoteFileObj = (url, idx = 0) => {
+      // derive a name from url
+      const name = url.split("/").pop().split("?")[0] || `remote-image-${idx}`;
+      return {
+        file: null, // no actual File object
+        name,
+        size: "0 MB",
+        progress: 100,
+        status: "success",
+        // use remote url as preview (don't revoke this)
+        preview: url,
+        isRemote: true, // flag so we don't revoke on cleanup
+      };
+    };
+
+    if (isMultiple && Array.isArray(watchedValue)) {
+      // watchedValue is an array (could be files or URLs). We only init when elements are strings (URLs)
+      const remoteUrls = watchedValue.filter((v) => typeof v === "string");
+      if (remoteUrls.length > 0) {
+        setFiles((prev) => {
+          // preserve any local files already present (file.file !== null)
+          const localFiles = prev.filter((f) => f.file);
+          const remoteObjs = remoteUrls.map((u, i) => makeRemoteFileObj(u, i));
+          return [...localFiles, ...remoteObjs].slice(0, maxFiles);
+        });
+      }
+    } else if (!isMultiple && typeof watchedValue === "string") {
+      // single value is a url string
+      setFiles((prev) => {
+        // if already have a local file, do not override it
+        const hasLocal = prev.some((f) => f.file);
+        if (hasLocal) return prev;
+        return [makeRemoteFileObj(watchedValue, 0)];
+      });
+    } else if (!isMultiple && watchedValue && watchedValue instanceof File) {
+      // If watchedValue is a real File (unlikely on reset but handle it)
+      const preview = watchedValue.type?.startsWith("image/")
+        ? URL.createObjectURL(watchedValue)
+        : null;
+      setFiles([
+        {
+          file: watchedValue,
+          name: watchedValue.name,
+          preview,
+          status: "success",
+        },
+      ]);
+    }
+  }, [watchedValue, isMultiple, maxFiles]);
+
+  // Parse acceptable file types
+  const acceptedFileTypes = useMemo(() => {
     const typeMap = {
-      "image/jpeg": ".jpg",
+      "image/jpeg": ".jpg/.jpeg",
+      "image/jpg": ".jpg",
       "image/png": ".png",
+      "image/gif": ".gif",
+      "image/webp": ".webp",
       "application/pdf": ".pdf",
       "text/csv": ".csv",
       "application/vnd.ms-excel": ".xls",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         ".xlsx",
-      // Add more mappings as needed
     };
 
     return accept
@@ -1372,26 +1486,32 @@ export const FileUploadCommon = ({
       .join(", ");
   }, [accept]);
 
+  // Update form value whenever files change
+  // Update form value whenever files change
   useEffect(() => {
-    // For single file upload, we only care about the first successful file
-    const validFile =
-      files.find((file) => file.status === "success")?.file || undefined;
+    // Use file.file (File object) when available, otherwise fallback to preview (remote URL)
+    const validFiles = files
+      .filter((file) => file.status === "success")
+      .map((file) => file.file ?? file.preview); // <-- CHANGED: fallback to preview
 
-    // Determine if there's at least one invalid file
     const hasInvalidFiles = files.some(
       (file) => file.status === "error" || file.status === "uploading"
     );
 
-    // Update the form field with the single valid file
-    setValue(name, validFile, { shouldValidate: true });
+    if (isMultiple) {
+      setValue(name, validFiles.length > 0 ? validFiles : undefined, {
+        shouldValidate: true,
+      });
+    } else {
+      setValue(name, validFiles[0] ?? undefined, { shouldValidate: true });
+    }
 
-    // Handle form validation
     if (hasInvalidFiles) {
       setFormError(name, {
         type: "manual",
         message: "Please remove invalid files before submitting",
       });
-    } else if (!validFile && files.length > 0) {
+    } else if (validFiles.length === 0 && files.length > 0) {
       setFormError(name, {
         type: "manual",
         message: "A valid file is required",
@@ -1399,26 +1519,38 @@ export const FileUploadCommon = ({
     } else {
       clearErrors(name);
     }
-  }, [files, setValue, setFormError, clearErrors, name]);
+  }, [files, setValue, setFormError, clearErrors, name, isMultiple]);
 
-  const onDrop = React.useCallback(
+  const onDrop = useCallback(
     (acceptedFiles, rejectedFiles) => {
-      if (files.length + acceptedFiles.length > MAX_FILES) {
-        setError(`You can upload a maximum of ${MAX_FILES} file.`);
+      // For single file mode, allow replacement
+      if (!isMultiple && files.length > 0) {
+        if (files[0]?.preview) URL.revokeObjectURL(files[0].preview);
+        setFiles([]);
+      }
+
+      // For multiple files, check if we're at the limit (only when not replacing)
+      if (
+        isMultiple &&
+        replaceIndex === null &&
+        files.length + acceptedFiles.length > maxFiles
+      ) {
+        setError(
+          `You can upload a maximum of ${maxFiles} file${
+            maxFiles > 1 ? "s" : ""
+          }.`
+        );
         return;
       }
 
       setError("");
       let newFiles = [];
 
-      acceptedFiles.forEach((file) => {
+      const processFile = (file) => {
         const fileType = file.type;
-        // Improved check: use more flexible validation
         const acceptedTypes = accept.split(",").map((type) => type.trim());
 
-        // Check if the file type is in our accepted list
         const isValidType = acceptedTypes.some((type) => {
-          // Handle wildcard types like "image/*"
           if (type.endsWith("/*")) {
             const mainType = type.split("/")[0];
             return fileType.startsWith(mainType + "/");
@@ -1427,34 +1559,47 @@ export const FileUploadCommon = ({
         });
 
         if (!isValidType) {
-          newFiles.push({
+          return {
             file,
             name: file.name,
             size: (file.size / 1024 / 1024).toFixed(1) + " MB",
             status: "error",
             errorMessage: "Unsupported File Type!",
-          });
-        } else if (file.size > 5 * 1024 * 1024) {
-          newFiles.push({
+            preview: null,
+          };
+        } else if (file.size > maxSizeBytes) {
+          return {
             file,
             name: file.name,
             size: (file.size / 1024 / 1024).toFixed(1) + " MB",
             status: "error",
-            errorMessage: "File Size Exceeds 5MB",
-          });
+            errorMessage: `File Size Exceeds ${maxSize}MB`,
+            preview: null,
+          };
         } else {
-          newFiles.push({
+          const preview = file.type.startsWith("image/")
+            ? URL.createObjectURL(file)
+            : null;
+
+          // start simulated upload for this file
+          simulateUpload(file.name);
+
+          return {
             file,
             name: file.name,
             size: (file.size / 1024 / 1024).toFixed(1) + " MB",
             progress: 0,
             status: "uploading",
-          });
-          simulateUpload(file.name);
+            preview,
+          };
         }
+      };
+
+      // Build new files array from acceptedFiles
+      acceptedFiles.forEach((file) => {
+        newFiles.push(processFile(file));
       });
 
-      // Rejected by dropzone itself (e.g. file too large, wrong type)
       rejectedFiles.forEach((rejected) => {
         newFiles.push({
           file: rejected.file,
@@ -1462,16 +1607,43 @@ export const FileUploadCommon = ({
           size: (rejected.file.size / 1024 / 1024).toFixed(1) + " MB",
           status: "error",
           errorMessage: rejected.errors[0]?.message || "Unsupported File",
+          preview: null,
         });
       });
 
-      // Replace existing files (for single file upload)
-      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+      // If replaceIndex is set => replace that index with the first valid accepted file(s).
+      if (replaceIndex !== null) {
+        setFiles((prev) => {
+          const updated = [...prev];
+          // revoke preview of old file
+          if (updated[replaceIndex]?.preview) {
+            URL.revokeObjectURL(updated[replaceIndex].preview);
+          }
+          // replace with first newFiles item (if exists). If multiple were picked, insert them after the replaced index if space.
+          if (newFiles.length > 0) {
+            // replace the index
+            updated[replaceIndex] = newFiles[0];
+            // if more new files and room, insert them right after
+            for (let i = 1; i < newFiles.length; i++) {
+              if (updated.length < maxFiles)
+                updated.splice(replaceIndex + i, 0, newFiles[i]);
+            }
+          }
+          return updated;
+        });
+        setReplaceIndex(null);
+      } else {
+        // original behavior: append for multiple, replace for single
+        if (isMultiple) {
+          setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+        } else {
+          setFiles(newFiles);
+        }
+      }
     },
-    [files, accept]
+    [files, accept, maxFiles, maxSizeBytes, maxSize, isMultiple, replaceIndex]
   );
 
-  // Simulate file upload progress
   const simulateUpload = (fileName) => {
     let progress = 0;
     const interval = setInterval(() => {
@@ -1489,16 +1661,25 @@ export const FileUploadCommon = ({
           )
         );
       }
-    }, 500);
+    }, 300);
   };
 
-  // Remove file from list
   const removeFile = (fileName) => {
-    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+    setFiles((prevFiles) => {
+      const fileToRemove = prevFiles.find((file) => file.name === fileName);
+      if (
+        fileToRemove?.preview &&
+        !fileToRemove?.isRemote &&
+        fileToRemove?.file
+      ) {
+        // revoke only if it's an object URL we created and there's an actual File
+        URL.revokeObjectURL(fileToRemove.preview);
+      }
+      return prevFiles.filter((file) => file.name !== fileName);
+    });
   };
 
-  // Convert accept string to Dropzone format object
-  const dropzoneAccept = React.useMemo(() => {
+  const dropzoneAccept = useMemo(() => {
     return accept.split(",").reduce((acc, type) => {
       const trimmedType = type.trim();
       acc[trimmedType] = [];
@@ -1506,94 +1687,325 @@ export const FileUploadCommon = ({
     }, {});
   }, [accept]);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: dropzoneAccept,
-    multiple: false,
-    maxSize: 5 * 1024 * 1024, // 5MB
+    multiple: isMultiple,
+    maxSize: maxSizeBytes,
+    noClick: false, // Allow clicking anywhere
+    noKeyboard: false,
   });
+
+  const hasValidFiles = files.some((file) => file.status === "success");
+  const successFiles = files.filter((file) => file.status === "success");
+
+  // Cleanup previews on unmount
+  useEffect(() => {
+    return () => {
+      files.forEach((file) => {
+        if (file.preview && !file.isRemote) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+    };
+    // intentionally not including files in deps so cleanup happens on unmount only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <FormField
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className="flex flex-col w-full ">
-          <div
-            {...getRootProps()}
-            className="border border-dashed border-gray-300 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all hover:border-gray-500"
-          >
-            <input {...getInputProps()} />
-            <UploadCloud className="h-8 w-8 text-gray-500 mb-2" />
-            <p className="text-gray-700">Upload Document</p>
-            <p className="text-sm text-gray-500">
-              Drag & Drop your file here or{" "}
-              <span className="text-indigo-600 underline">browse a file</span>
-            </p>
-          </div>
+        <FormItem className={cn("flex flex-col w-full", className)}>
+          {label && <FormLabel>{label}</FormLabel>}
+          <FormControl>
+            <div className="space-y-4">
+              {/* Main Upload Area */}
+              <div
+                className={cn(
+                  "border-2 border-dashed rounded-lg relative transition-all", // removed overflow-hidden
+                  isDragActive
+                    ? "border-primary bg-primary/5"
+                    : "border-gray-300 hover:border-gray-400",
+                  fieldState.error && "border-red-500"
+                )}
+              >
+                {/* Single File with Preview */}
+                {!isMultiple && hasValidFiles && showPreview ? (
+                  <div
+                    className="relative group cursor-pointer"
+                    onMouseEnter={() => setHoveredIndex(0)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                  >
+                    <div
+                      {...getRootProps()}
+                      className="relative w-full h-48 sm:h-64"
+                    >
+                      <input {...getInputProps()} ref={inputRef} />
 
-          <div className="flex items-center justify-between gap-2 text-sm">
-            <p>
-              <span className="font-medium">Supported File Type:</span>
-              <span>{acceptedFileTypes}</span>
-            </p>
-            <p>
-              <span className="font-medium">Max File Size:</span>
-              <span>5 MB</span>
-            </p>
-          </div>
-
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-
-          {files.length > 0 && (
-            <div className="mt-4 space-y-2">
-              {files.map((file) => (
-                <motion.div
-                  key={file.name}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className={`flex items-center justify-between p-3 rounded-md border w-full ${
-                    file.status === "error"
-                      ? "border-red-500 bg-red-100"
-                      : file.status === "uploading"
-                      ? "border-yellow-500 bg-yellow-50"
-                      : "border-gray-300 bg-gray-100"
-                  }`}
-                >
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{file.name}</p>
-                    <p className="text-xs text-gray-500">{file.size}</p>
-
-                    {file.status === "error" && (
-                      <p className="text-red-500 text-xs">
-                        {file.errorMessage}
-                      </p>
-                    )}
-
-                    {file.status === "uploading" && (
-                      <div className="w-full mt-2">
-                        <Progress
-                          value={uploadProgress[file.name] || 0}
-                          className="w-full h-2"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {file.status === "success" && (
-                      <Check className="text-green-600" />
-                    )}
-                    <button type="button" onClick={() => removeFile(file.name)}>
-                      <Trash2 className="text-gray-600 hover:text-red-500" />
+                      <img
+                        src={successFiles[0]?.preview}
+                        alt={successFiles[0]?.name}
+                        className="w-full h-full object-cover"
+                      />
+                      {/* Hover Overlay */}
+                      <AnimatePresence>
+                        {(hoveredIndex === 0 || isDragActive) && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2"
+                          >
+                            <UploadCloud className="h-8 w-8 text-white" />
+                            <p className="text-white font-medium">{title}</p>
+                            <p className="text-white/80 text-sm">
+                              Drag and drop or click to change
+                            </p>
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              className="mt-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReplaceIndex(0);
+                                // open native file picker
+                                setTimeout(() => inputRef?.current?.click(), 0);
+                              }}
+                            >
+                              Change Image
+                            </Button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                    {/* Remove button - top right corner */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFile(successFiles[0].name);
+                      }}
+                      className="absolute -top-2 -right-2 z-50 bg-white rounded-full p-1.5 shadow-lg border border-gray-200 hover:bg-red-50 hover:border-red-500 transition-colors"
+                    >
+                      <X className="h-4 w-4 text-gray-600 hover:text-red-500" />
                     </button>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
+                ) : isMultiple && hasValidFiles ? (
+                  /* Multiple Files Grid Inside Upload Area */
+                  <div {...getRootProps()} className="p-6">
+                    <input {...getInputProps()} ref={inputRef} />
 
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                      <AnimatePresence>
+                        {successFiles.map((file, index) => (
+                          <motion.div
+                            key={file.name}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            className="relative group"
+                            onMouseEnter={() => setHoveredIndex(index)}
+                            onMouseLeave={() => setHoveredIndex(null)}
+                          >
+                            <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-100">
+                              {file.preview ? (
+                                <>
+                                  <img
+                                    src={file.preview}
+                                    alt={file.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  {hoveredIndex === index && (
+                                    <motion.div
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      className="absolute inset-0 bg-black/40 flex items-center justify-center"
+                                    >
+                                      <Button
+                                        type="button"
+                                        className="pointer-events-auto bg-white/10 px-3 py-1 rounded text-xs"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setReplaceIndex(index);
+                                          setTimeout(() => {
+                                            if (inputRef?.current)
+                                              inputRef.current.click();
+                                          }, 0);
+                                        }}
+                                      >
+                                        Change
+                                      </Button>
+                                    </motion.div>
+                                  )}
+                                </>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <p className="text-xs text-gray-500 text-center p-2">
+                                    {file.name}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Remove button */}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeFile(file.name);
+                              }}
+                              className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg border border-gray-200 hover:bg-red-50 hover:border-red-500 transition-colors z-10"
+                            >
+                              <X className="h-3.5 w-3.5 text-gray-600 hover:text-red-500" />
+                            </button>
+                          </motion.div>
+                        ))}
+
+                        {/* Add More Button - only show if not at max */}
+                        {successFiles.length < maxFiles && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-gray-400 flex items-center justify-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              inputRef?.current?.click();
+                            }}
+                          >
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <UploadCloud className="h-6 w-6 text-gray-400" />
+                              <p className="text-xs text-gray-500 font-medium">
+                                Add More
+                              </p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                ) : (
+                  /* Empty Upload Area */
+                  <div
+                    {...getRootProps()}
+                    className="p-8 sm:p-12 flex flex-col items-center justify-center cursor-pointer"
+                  >
+                    <input {...getInputProps()} ref={inputRef} />
+
+                    <UploadCloud className="h-12 w-12 text-gray-400 mb-4" />
+                    <p className="text-gray-700 font-medium text-lg mb-1">
+                      {title}
+                    </p>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Drag and drop or click to upload
+                    </p>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        inputRef?.current?.click();
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* File Info */}
+              <div className="flex items-center justify-between gap-4 text-sm text-gray-600">
+                <p>
+                  <span className="font-medium">Supported:</span>{" "}
+                  {acceptedFileTypes}
+                </p>
+                <p>
+                  <span className="font-medium">Max Size:</span> {maxSize} MB
+                </p>
+              </div>
+
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+
+              {/* Uploading/Error Files List */}
+              {/* Uploading overlay + compact error list */}
+              {/* Show a brief spinner overlay over the dropzone while any file is uploading */}
+              <AnimatePresence>
+                {files.some((f) => f.status === "uploading") && (
+                  <motion.div
+                    key="upload-overlay"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none"
+                    style={{ backdropFilter: "blur(2px)" }}
+                  >
+                    <div className="absolute inset-0 bg-black/25" />
+                    <div className="relative z-10 flex flex-col items-center gap-3 bg-white/5 backdrop-blur-sm rounded-lg p-4">
+                      {/* Replace with your spinner component or SVG */}
+                      <svg
+                        className="animate-spin h-8 w-8"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
+                      </svg>
+
+                      <p className="text-sm text-white/90">Uploading…</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Compact error list (only show files with status === 'error') */}
+              {files.some((f) => f.status === "error") && (
+                <div className="space-y-2">
+                  {files
+                    .filter((f) => f.status === "error")
+                    .map((file) => (
+                      <motion.div
+                        key={file.name}
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        className="flex items-center justify-between p-3 rounded-md border border-red-200 bg-red-50"
+                      >
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-red-700">
+                            {file.name}
+                          </p>
+                          <p className="text-xs text-red-600">
+                            {file.errorMessage}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => removeFile(file.name)}
+                          className="ml-4 text-red-600 hover:text-red-800"
+                        >
+                          Remove
+                        </button>
+                      </motion.div>
+                    ))}
+                </div>
+              )}
+            </div>
+          </FormControl>
           <FormMessage />
         </FormItem>
       )}
