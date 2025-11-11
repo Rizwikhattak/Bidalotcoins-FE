@@ -1,7 +1,6 @@
 import { DataTableCommon } from "@/components/common/DataTableCommon";
 import { DataTableColumnHeaderCommon } from "@/components/common/DataTableColumnHeaderCommon";
 import { formateDateTime } from "../../utils/Helpers";
-import { Button } from "../../../../../dext-dev/dext-dev/src/Component/ui/button";
 import { Search, Trash } from "lucide-react";
 import ThreeDotsMenuIcon from "../icons/ThreeDotsMenuIcon";
 import { APP_CONSTANTS } from "../../utils/Constants";
@@ -23,6 +22,7 @@ import {
 import DialogCommon from "../common/DialogCommon";
 import AddUpdateRole from "./AddUpdateRole";
 import { useState } from "react";
+import { Button } from "../ui/button";
 const Roles = () => {
   const { data, error, isLoading } = useGetRolesQuery();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);

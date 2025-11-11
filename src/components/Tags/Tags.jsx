@@ -6,7 +6,6 @@ import {
   useGetUsersQuery,
 } from "../../app/features/users/usersApi";
 import { formateDateTime } from "../../utils/Helpers";
-import { Button } from "../../../../../dext-dev/dext-dev/src/Component/ui/button";
 import { Edit, Search, Trash } from "lucide-react";
 import ThreeDotsMenuIcon from "../icons/ThreeDotsMenuIcon";
 import { APP_CONSTANTS } from "../../utils/Constants";
@@ -24,6 +23,7 @@ import {
   useGetTagsQuery,
   useUpdateTagMutation,
 } from "../../app/features/tags/tagsApi";
+import { Button } from "../ui/button";
 const Tags = ({
   selectedRowData,
   setSelectedRowData,

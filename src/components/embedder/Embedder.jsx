@@ -6,7 +6,6 @@ import {
   useGetUsersQuery,
 } from "../../app/features/users/usersApi";
 import { formateDateTime } from "../../utils/Helpers";
-import { Button } from "../../../../../dext-dev/dext-dev/src/Component/ui/button";
 import { Edit, Search, Trash, Copy, Check } from "lucide-react";
 import ThreeDotsMenuIcon from "../icons/ThreeDotsMenuIcon";
 import { APP_CONSTANTS } from "../../utils/Constants";
@@ -25,6 +24,7 @@ import {
 } from "../../app/features/tags/tagsApi";
 import { useGetEmbeddersQuery } from "../../app/features/embedder/embeddersApi";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 // Animated Copy Button Component
 const CopyButton = ({ textToCopy }) => {
