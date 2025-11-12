@@ -2,6 +2,7 @@ export const APP_CONSTANTS = {
   ACCESS_TOKEN: "access_token",
   REFRESH_TOKEN: "refresh_token",
   USER_CREDENTIALS: "user_credentials",
+  USER_PERMISSIONS: "user_permissions",
   GLOBAL_THEME: "global_theme",
   DARK_THEME: "dark",
   LIGHT_THEME: "light",
@@ -16,12 +17,71 @@ export const APP_CONSTANTS = {
   ACTIVE_STATUS: "Active",
   INACTIVE_STATUS: "Inactive",
   DEACTIVATED_STATUS: "Deactivated",
+  PUBLISHED_STATUS: "Published",
+  ARCIVED_STATUS: "Archived",
+};
+
+export const PERMISSIONS = {
+  SHOW_ROLE: "show_role",
+  CREATE_ROLE: "create_role",
+  READ_ROLE: "read_role",
+  UPDATE_ROLE: "update_role",
+  DELETE_ROLE: "delete_role",
+  SHOW_USER: "show_user",
+  CREATE_USER: "create_user",
+  READ_USER: "read_user",
+  UPDATE_USER: "update_user",
+  DELETE_USER: "delete_user",
+  TOGGLE_USER: "toggle_user",
+  SHOW_AUCTION: "show_auction",
+  CREATE_AUCTION: "create_auction",
+  READ_AUCTION: "read_auction",
+  UPDATE_AUCTION: "update_auction",
+  DELETE_AUCTION: "delete_auction",
+  SHOW_TAG: "show_tag",
+  CREATE_TAG: "create_tag",
+  READ_TAG: "read_tag",
+  UPDATE_TAG: "update_tag",
+  DELETE_TAG: "delete_tag",
+  SHOW_LOT: "show_lot",
+  CREATE_LOT: "create_lot",
+  READ_LOT: "read_lot",
+  UPDATE_LOT: "update_lot",
+  DELETE_LOT: "delete_lot",
+  SHOW_FAQ: "show_faq",
+  CREATE_FAQ: "create_faq",
+  READ_FAQ: "read_faq",
+  UPDATE_FAQ: "update_faq",
+  DELETE_FAQ: "delete_faq",
+  GET_PROFILE: "get_profile",
+  UPDATE_PROFILE: "update_profile",
+  SHOW_NEWS_CATEGORY: "show_news_category",
+  CREATE_NEWS_CATEGORY: "create_news_category",
+  READ_NEWS_CATEGORY: "read_news_category",
+  UPDATE_NEWS_CATEGORY: "update_news_category",
+  DELETE_NEWS_CATEGORY: "delete_news_category",
+  SHOW_NEWS_UPDATE: "show_news_update",
+  CREATE_NEWS_UPDATE: "create_news_update",
+  READ_NEWS_UPDATE: "read_news_update",
+  UPDATE_NEWS_UPDATE: "update_news_update",
+  DELETE_NEWS_UPDATE: "delete_news_update",
+  SHOW_BUSINESS: "show_business",
+  CREATE_BUSINESS: "create_business",
+  READ_BUSINESS: "read_business",
+  UPDATE_BUSINESS: "update_business",
+  DELETE_BUSINESS: "delete_business",
+  CREATE_HOTLINK: "create_hotlink",
+  READ_HOTLINK: "read_hotlink",
+  DELETE_HOTLINK: "delete_hotlink",
+  SHOW_HOTLINK: "show_hotlink",
 };
 
 export const GLOBAL_ROUTES = {
   // ================= ADMIN =================
   ADMIN_LOGIN: "/",
   ADMIN_FORGET_PASSWORD_ONE: "/admin/forget-password",
+  ADMIN_SET_PASSWORD: "/admin/set-password",
+  ADMIN_ACTIVATE_ACCOUNT: "/admin/activate-account",
   ADMIN_DASHBOARD: "/admin/dashboard",
   ADMIN_AUCTIONS: "/admin/auctions",
   ADMIN_ADD_AUCTION: "/admin/auctions/add-new-auction",
@@ -33,8 +93,10 @@ export const GLOBAL_ROUTES = {
   ADMIN_BIDDING_HISTORY: "/admin/bidding-history",
   ADMIN_USERS: "/admin/users", // user management
   ADMIN_FAQS: "/admin/faqs",
+  ADMIN_NEWS_UPDATES: "/admin/news-updates",
+  ADMIN_ADD_NEWS_UPDATES: "/admin/news-updates/add-new-update",
   ADMIN_NOTIFICATIONS: "/admin/notifications",
-  VERIFY_LINKS: "/verify-link/",
+  VERIFY_LINKS: "/verify-link/:token",
   EMBEDDER_PROGRAM: "/embedder/",
 
   // ================= CUSTOMER =================
@@ -60,6 +122,8 @@ export const RTK_TAGS = {
   LOTS: "LOTS",
   COUNTRY: "COUNTRY",
   EMBEDDER: "EMBEDDER",
+  FAQS: "FAQS",
+  NEWS_UPDATES: "NEWS_UPDATES",
 };
 
 export const API_URLS = {
@@ -68,6 +132,9 @@ export const API_URLS = {
   USER_LOGIN: "user/v1/login/",
   USER_LOGOUT: "user/v1/logout/",
   USER_FORGET_PASSWORD_SEND_LINK: "user/v1/forget/password/",
+  VERIFY_LINK: "user/v1/verify/link/",
+  SET_PASSWORD: "user/v1/reset/password/",
+  ACTIVATE_ACCOUNT: "user/v1/account/activate/",
 
   //User
   USERS: "user/v1/",
@@ -86,6 +153,11 @@ export const API_URLS = {
   // lots
   LOTS: "marketplace/v1/lot/",
 
+  //Faqs
+  FAQS: "misc/v1/faq/",
+
+  //News Updates
+  NEWS_UPDATES: "marketplace/v1/news/update/",
   //Commons
   COUNTRIES: "misc/v1/country/",
 

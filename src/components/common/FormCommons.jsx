@@ -58,6 +58,7 @@ import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { TypographyMuted, TypographyP } from "./Typography";
 import { Textarea } from "../ui/textarea";
 import { motion, AnimatePresence } from "framer-motion";
+import { Label } from "../ui/label";
 // Spinner component
 const Spinner = ({ size = 16, className = "" }) => (
   <div
@@ -1355,11 +1356,11 @@ export const DatePickerCommon = ({
 };
 // FormCommons.jsx (or wherever you keep it)
 
-export const CheckboxCommon = ({ control, name, label, value, fieldName }) => {
+export const CheckboxCommon = ({ control, label, value, name }) => {
   return (
     <FormField
       control={control}
-      name={fieldName} // Use the array field name (e.g., "permissions")
+      name={name} // Use the array field name (e.g., "permissions")
       render={({ field }) => (
         <FormItem className="flex items-center gap-2">
           <FormControl>
@@ -2526,34 +2527,31 @@ export const RadioGroupCommon = ({
                 : options.map((option) => {
                     const radioId = `radio-${option.id}`;
                     return (
-                      <label
-                        key={option.id}
-                        htmlFor={radioId}
-                        className={cn(
-                          `block relative border rounded-md p-4 transition-all cursor-pointer hover:border-primary-custom ${
-                            type === "row" ? "h-full !mt-0" : "!mt-3"
-                          }`,
-                          field.value === option.id
-                            ? "border-primary-custom bg-primary-custom/5"
-                            : "border-border"
-                        )}
-                      >
-                        <div className="flex items-start gap-3 h-full">
-                          <RadioGroupItem
-                            value={option.id}
-                            id={radioId}
-                            className="mt-1"
-                          />
-                          <div className="flex-1">
-                            <div className="text-base font-medium">
-                              {option.name}
-                            </div>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {option?.description || ""}
-                            </p>
-                          </div>
-                        </div>
-                      </label>
+                      <div className="flex items-center gap-3 h-full w-fit">
+                        <RadioGroupItem
+                          value={option.id}
+                          id={radioId}
+                          className="mt-1"
+                        />
+                        <Label
+                          key={option.id}
+                          htmlFor={radioId}
+                          className={
+                            type === "row"
+                              ? cn(
+                                  `block relative border rounded-md p-4 transition-all cursor-pointer hover:border-primary-custom ${
+                                    type === "row" ? "h-full !mt-0" : "!mt-3"
+                                  }`,
+                                  field.value === option.id
+                                    ? "border-primary-custom bg-primary-custom/5"
+                                    : "border-border"
+                                )
+                              : ""
+                          }
+                        >
+                          {option?.name || ""}
+                        </Label>
+                      </div>
                     );
                   })}
             </RadioGroup>

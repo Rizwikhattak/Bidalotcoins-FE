@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { API_URLS } from "../../utils/Constants";
+import { API_URLS, GLOBAL_ROUTES } from "../../utils/Constants";
 import { logout, setAuthCredentials } from "../features/auth/authSlice";
 import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1/";
@@ -44,6 +44,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       result = await rawBaseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logout());
+      // window.location.href = GLOBAL_ROUTES.ADMIN_LOGIN;
     }
   }
 

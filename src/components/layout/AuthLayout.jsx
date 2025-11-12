@@ -10,13 +10,13 @@ import {
 } from "../common/Typography";
 import { Button } from "../ui/button";
 import { useTheme } from "../../hooks/useTheme";
-const AuthLayout = ({ children }) => {
+const AuthLayout = ({ children, title = "", description = "" }) => {
   return (
     <div className="flex w-full min-h-screen p-10">
       <div className="flex-1 p-10">
         <div className="login-header">
-          <TypographyH2>Login</TypographyH2>
-          <TypographyMuted>Enter email and password</TypographyMuted>
+          <TypographyH2>{title}</TypographyH2>
+          <TypographyMuted>{description}</TypographyMuted>
         </div>
         <div className="login-content mt-24 flex flex-col justify-center items-center gap-20">
           <div className="bidalot-logo">

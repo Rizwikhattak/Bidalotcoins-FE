@@ -18,4 +18,17 @@ const loginSchema = z.object({
   // rememberMe: z.boolean().optional(),
 });
 
-export { loginSchema, forgetPasswordLinkSchema };
+const setPasswordScheema = z
+  .object({
+    new_password: passwordSchema,
+    confirm_password: z
+      .string()
+      .min(1, { message: "Confirm password is required" }),
+    terms_conditions: z.boolean(),
+  })
+  .refine((data) => data.new_password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  });
+
+export { loginSchema, forgetPasswordLinkSchema, setPasswordScheema };

@@ -5,6 +5,9 @@ const initialState = {
   data: localStorage.getItem(APP_CONSTANTS.USER_CREDENTIALS)
     ? JSON.parse(localStorage.getItem(APP_CONSTANTS.USER_CREDENTIALS))
     : null,
+  permissions: localStorage.getItem(APP_CONSTANTS.USER_PERMISSIONS)
+    ? JSON.parse(localStorage.getItem(APP_CONSTANTS.USER_PERMISSIONS))
+    : null,
   access_token: localStorage.getItem(APP_CONSTANTS.ACCESS_TOKEN) || null,
   refresh_token: localStorage.getItem(APP_CONSTANTS.REFRESH_TOKEN) || null,
 };
@@ -14,10 +17,18 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setAuthCredentials: (state, action) => {
-      const { access_token, refresh_token, ...user } = action.payload.data;
+      const {
+        access_token,
+        refresh_token,
+        permissions = {},
+        ...user
+      } = action.payload.data;
+
       state.data = user;
       state.access_token = access_token || null;
       state.refresh_token = refresh_token || null;
+      state.permissions = permissions || null;
+
       if (access_token)
         localStorage.setItem(APP_CONSTANTS.ACCESS_TOKEN, access_token);
       if (refresh_token)
@@ -27,13 +38,21 @@ const authSlice = createSlice({
           APP_CONSTANTS.USER_CREDENTIALS,
           JSON.stringify(user)
         );
+      if (permissions)
+        localStorage.setItem(
+          APP_CONSTANTS.USER_PERMISSIONS,
+          JSON.stringify(permissions)
+        );
     },
     logout: (state) => {
       state.data = null;
       state.access_token = null;
       state.refresh_token = null;
+      state.permissions = null;
       localStorage.removeItem(APP_CONSTANTS.ACCESS_TOKEN);
       localStorage.removeItem(APP_CONSTANTS.REFRESH_TOKEN);
+      localStorage.removeItem(APP_CONSTANTS.USER_CREDENTIALS);
+      localStorage.removeItem(APP_CONSTANTS.USER_PERMISSIONS);
     },
   },
 });

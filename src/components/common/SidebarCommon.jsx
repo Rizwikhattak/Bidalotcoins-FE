@@ -27,13 +27,14 @@ import { authRequiredRoutes } from "@/routes.js";
 import { APP_CONSTANTS, GLOBAL_ROUTES } from "../../utils/Constants";
 import BidalotLogo from "@/assets/images/Bidalot-primary-logo-dark.png";
 import { useLogoutUserMutation } from "../../app/features/auth/authApi";
+import { TypographyH3 } from "./Typography";
 const SidebarCommon = () => {
   const { state } = useSidebar();
   const dispatch = useDispatch();
   const [logoutUser] = useLogoutUserMutation();
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
-
+  console.log("PERMISSIONSSSSSSSSSS", auth?.permissions);
   const LABEL_TO_GROUP_TITLE = {
     [APP_CONSTANTS.DASHBOARD_LABEL]: "",
     [APP_CONSTANTS.AUCTIONS_ACTIVITIES_LABEL]: "Auction & Activities",
@@ -57,13 +58,26 @@ const SidebarCommon = () => {
     const map = new Map();
     routes.forEach((item) => {
       if (!item.includeInSidebar) return;
+
       if (!map.has(item.label)) {
         map.set(item.label, {
           title: LABEL_TO_GROUP_TITLE[item.label],
           routes: [],
         });
       }
+      if (
+        item.permission !== null &&
+        auth?.permissions &&
+        !(item.permission in auth.permissions)
+      )
+        return;
       map.get(item.label).routes.push(item);
+    });
+    map.forEach((value, key) => {
+      console.log(key, value);
+      if (value.routes.length === 0) {
+        map.delete(key);
+      }
     });
     return Array.from(map.values());
   }
@@ -119,22 +133,22 @@ const SidebarCommon = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
-                    className={`!text-white ${
+                    className={`!text-white cursor-pointer ${
                       state === "collapsed"
                         ? "bg-none p-5 flex items-center justify-center"
-                        : "!bg-[#1976D2]"
+                        : " !bg-black"
                     } !h-14 `}
                   >
-                    <Avatar className="w-7 h-7">
+                    <Avatar className="w-7 h-7 ">
                       <AvatarImage src={auth?.data?.profile_image} />
-                      <AvatarFallback className="!bg-blue-300 !text-white capitalize">
+                      <AvatarFallback className="!bg-primary  capitalize">
                         {auth?.data?.first_name?.[0]?.toLocaleUpperCase()}
                         {auth?.data?.last_name?.[0]?.toLocaleUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <span>
-                      <h1 className="font-medium">{auth?.data?.full_name}</h1>
-                      <p className="text-xs">{auth?.data?.username}</p>
+                      <h1 className="font-medium ">{auth?.data?.full_name}</h1>
+                      <p className="text-xs ">{auth?.data?.username}</p>
                     </span>
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
@@ -144,14 +158,7 @@ const SidebarCommon = () => {
                       Profile
                       {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      Support
-                      {/* <DropdownMenuShortcut>⌘B</DropdownMenuShortcut> */}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      Affiliate
-                      {/* <DropdownMenuShortcut>⌘S</DropdownMenuShortcut> */}
-                    </DropdownMenuItem>
+
                     <DropdownMenuItem
                       onClick={() => navigate(GLOBAL_ROUTES.EMBEDDER_PROGRAM)}
                     >

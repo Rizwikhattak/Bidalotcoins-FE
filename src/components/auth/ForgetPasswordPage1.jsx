@@ -36,7 +36,10 @@ const ForgetPasswordPage1 = () => {
     console.error("Form error: ", error);
   };
   return (
-    <AuthLayout>
+    <AuthLayout
+      title="Forgot Your Password?"
+      description="Enter your registered email address and we'll send you a reset link"
+    >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit, handleFormError)}>
           <InputCommon

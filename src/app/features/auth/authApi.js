@@ -45,11 +45,39 @@ export const authApi = api.injectEndpoints({
         body,
       }),
     }),
+    setPassword: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.SET_PASSWORD,
+        method: "POST",
+        body,
+      }),
+    }),
+    activateAccount: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.ACTIVATE_ACCOUNT,
+        method: "POST",
+        body,
+      }),
+    }),
+    verifyLink: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.VERIFY_LINK,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
   overrideExisting: false, //If an endpoint with the same name already exists → keep the old one and ignore the new definition. Useful for production, to avoid accidentally overwriting working endpoints.
 });
 
-export const { useLoginUserMutation, useLogoutUserMutation,useSendForgetPasswordLinkMutation } = authApi;
+export const {
+  useLoginUserMutation,
+  useLogoutUserMutation,
+  useSendForgetPasswordLinkMutation,
+  useVerifyLinkMutation,
+  useSetPasswordMutation,
+  useActivateAccountMutation,
+} = authApi;
 
 // src/features/api/userApi.js
 // import { api } from "../../services/baseApi"
@@ -104,3 +132,5 @@ export const { useLoginUserMutation, useLogoutUserMutation,useSendForgetPassword
 // })
 
 // export const { useGetUsersQuery, useAddUserMutation } = userApi
+
+

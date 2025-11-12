@@ -38,7 +38,7 @@ const AdminLoginPage = () => {
     console.error("Form error: ", error);
   };
   return (
-    <AuthLayout>
+    <AuthLayout title="Login" description="Enter email and password">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit, handleFormError)}>
           <InputCommon

@@ -188,8 +188,8 @@ export function DataTableCommon({
           {/* <DataTableViewOptionsCommon table={table} /> */}
         </div>
       )}
-      <div className="rounded-md ">
-        <Table className="w-full h-full">
+      <div className="rounded-md flex flex-col">
+        <Table className="w-full h-full flex-1">
           <TableHeader className=" bg-sidebar py-5 ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
