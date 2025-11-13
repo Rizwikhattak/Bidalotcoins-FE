@@ -89,7 +89,7 @@ const SidebarCommon = () => {
             <SidebarMenu className="!gap-4">
               <SidebarMenuItem>
                 <img
-                  src={APP_CONSTANTS.BUSINESS_LOGO_URL}
+                  src={BidalotLogo}
                   alt="Bidalot Logo"
                   className="object-contain w-24 h-14"
                 />
