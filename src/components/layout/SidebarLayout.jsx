@@ -9,6 +9,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { Switch } from "../ui/switch";
 import { APP_CONSTANTS } from "../../utils/Constants";
 import { Moon, Sun } from "lucide-react";
+import Breadcrumb from "../common/BreadCrumbs";
 
 const SidebarLayout = ({ children }) => {
   const location = useLocation();
@@ -42,7 +43,7 @@ const SidebarLayout = ({ children }) => {
           <div className="flex items-center justify-between gap-2 mr-4">
             <div className="flex items-center gap-2">
               <SidebarTrigger />
-              <HeaderCommon />
+              <Breadcrumb />
             </div>
             <div className="flex items-center space-x-2">
               <Switch

@@ -89,8 +89,8 @@ const SidebarCommon = () => {
             <SidebarMenu className="!gap-4">
               <SidebarMenuItem>
                 <img
-                  src={BidalotLogo}
-                  alt=""
+                  src={APP_CONSTANTS.BUSINESS_LOGO_URL}
+                  alt="Bidalot Logo"
                   className="object-contain w-24 h-14"
                 />
               </SidebarMenuItem>
@@ -154,7 +154,11 @@ const SidebarCommon = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuGroup className="space-y-2">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigate(GLOBAL_ROUTES.ADMIN_PROFILE_SETTINGS)
+                      }
+                    >
                       Profile
                       {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
                     </DropdownMenuItem>

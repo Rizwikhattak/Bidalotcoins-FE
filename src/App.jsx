@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ALL_ROUTES } from "./routes";
 import SidebarLayout from "./components/layout/SidebarLayout";
+import NotFoundPage from "./pages/NotFound/Page";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
               }
             />
           ))}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </>

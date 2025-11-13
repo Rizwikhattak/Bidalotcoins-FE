@@ -11,6 +11,7 @@ import FaqsPage from "@/pages/Admin/faqs/Page.jsx";
 import NewsUpdatesPage from "@/pages/Admin/news-updates/Page.jsx";
 import NotificationsPage from "@/pages/Admin/notifications/Page.jsx";
 import EmbeddersPage from "@/pages/Admin/embedder/Page.jsx";
+import ProfileSettingsPage from "@/pages/Admin/profile-settings/Page.jsx";
 
 import DashboardIcon from "./components/icons/DashboardIcon.jsx";
 import AuctionsIcon from "./components/icons/AuctionsIcon.jsx";
@@ -200,7 +201,7 @@ export const authRequiredRoutes = [
   },
   {
     path: GLOBAL_ROUTES.ADMIN_NEWS_UPDATES,
-    name: "News and updates",
+    name: "News & updates",
     label: APP_CONSTANTS.HELP_AND_SUPPORT_LABEL,
     icon: Newspaper,
     component: NewsUpdatesPage,
@@ -211,7 +212,7 @@ export const authRequiredRoutes = [
   },
   {
     path: GLOBAL_ROUTES.ADMIN_ADD_NEWS_UPDATES,
-    name: "News and updates",
+    name: "Add News & updates",
     label: APP_CONSTANTS.HELP_AND_SUPPORT_LABEL,
     icon: Newspaper,
     component: AddUpdateNewsUpdates,
@@ -239,6 +240,17 @@ export const authRequiredRoutes = [
     component: EmbeddersPage,
     protected: true,
     permission: PERMISSIONS.SHOW_HOTLINK,
+    withSidebar: true,
+    includeInSidebar: false,
+  },
+  {
+    path: GLOBAL_ROUTES.ADMIN_PROFILE_SETTINGS,
+    name: "Settings",
+    label: APP_CONSTANTS.EMBEDDER_LABEL,
+    icon: null,
+    component: ProfileSettingsPage,
+    protected: true,
+    permission: null,
     withSidebar: true,
     includeInSidebar: false,
   },

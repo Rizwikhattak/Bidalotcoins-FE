@@ -19,6 +19,8 @@ export const APP_CONSTANTS = {
   DEACTIVATED_STATUS: "Deactivated",
   PUBLISHED_STATUS: "Published",
   ARCIVED_STATUS: "Archived",
+  BUSINESS_LOGO_URL:
+    "http://167.88.165.177:8000/media/business_images/Logo_2025-11-13_013038.1895120000.png",
 };
 
 export const PERMISSIONS = {
@@ -97,7 +99,8 @@ export const GLOBAL_ROUTES = {
   ADMIN_ADD_NEWS_UPDATES: "/admin/news-updates/add-new-update",
   ADMIN_NOTIFICATIONS: "/admin/notifications",
   VERIFY_LINKS: "/verify-link/:token",
-  EMBEDDER_PROGRAM: "/embedder/",
+  EMBEDDER_PROGRAM: "/admin/embedder/",
+  ADMIN_PROFILE_SETTINGS: "/admin/profile-settings/",
 
   // ================= CUSTOMER =================
   HOME: "/",
@@ -124,6 +127,8 @@ export const RTK_TAGS = {
   EMBEDDER: "EMBEDDER",
   FAQS: "FAQS",
   NEWS_UPDATES: "NEWS_UPDATES",
+  PERSONAL_SETTINGS: "PERSONAL_SETTINGS",
+  BUSINESS_SETTINGS: "BUSINESS_SETTINGS",
 };
 
 export const API_URLS = {
@@ -158,6 +163,11 @@ export const API_URLS = {
 
   //News Updates
   NEWS_UPDATES: "marketplace/v1/news/update/",
+
+  // Profile Settings
+  PERSONAL_SETTINGS: "user/v1/profile/",
+  BUSINESS_SETTINGS: "misc/v1/business/",
+
   //Commons
   COUNTRIES: "misc/v1/country/",
 
