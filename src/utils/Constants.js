@@ -129,6 +129,7 @@ export const RTK_TAGS = {
   NEWS_UPDATES: "NEWS_UPDATES",
   PERSONAL_SETTINGS: "PERSONAL_SETTINGS",
   BUSINESS_SETTINGS: "BUSINESS_SETTINGS",
+  CONTACT_US: "CONTACT_US",
 };
 
 export const API_URLS = {
@@ -163,6 +164,9 @@ export const API_URLS = {
 
   //News Updates
   NEWS_UPDATES: "marketplace/v1/news/update/",
+
+  //Contact Us
+  CONTACT_US : "misc/v1/contactus/",
 
   // Profile Settings
   PERSONAL_SETTINGS: "user/v1/profile/",
