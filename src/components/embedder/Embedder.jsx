@@ -67,51 +67,48 @@ const Embedder = ({ selectedRowData, setSelectedRowData }) => {
   const [deleteEmbedder, { isLoading: isDeleteLoading }] =
     useDeleteEmbedderMutation();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  
 
   // Get selected rows whenever you need them
 
-
-
   const columns = [
     // Checkbox Select Column
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected()
-              ? true
-              : table.getIsSomePageRowsSelected()
-              ? "indeterminate"
-              : false
-          }
-          onCheckedChange={(value) =>
-            table.toggleAllPageRowsSelected(value === true)
-          }
-          aria-label="Select all"
-          className="bg-gray-200"
-        />
-      ),
-      cell: ({ row }) => (
-        <>
-          <Checkbox
-            checked={
-              row.getIsSelected()
-                ? true
-                : row.getIsSomeSelected()
-                ? "indeterminate"
-                : false
-            }
-            onCheckedChange={(value) => row.toggleSelected(value === true)}
-            aria-label="Select row"
-            className="bg-gray-200"
-          />
-        </>
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       checked={
+    //         table.getIsAllPageRowsSelected()
+    //           ? true
+    //           : table.getIsSomePageRowsSelected()
+    //           ? "indeterminate"
+    //           : false
+    //       }
+    //       onCheckedChange={(value) =>
+    //         table.toggleAllPageRowsSelected(value === true)
+    //       }
+    //       aria-label="Select all"
+    //       className="bg-gray-200"
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <>
+    //       <Checkbox
+    //         checked={
+    //           row.getIsSelected()
+    //             ? true
+    //             : row.getIsSomeSelected()
+    //             ? "indeterminate"
+    //             : false
+    //         }
+    //         onCheckedChange={(value) => row.toggleSelected(value === true)}
+    //         aria-label="Select row"
+    //         className="bg-gray-200"
+    //       />
+    //     </>
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
     {
       accessorKey: "filename",
       header: ({ column }) => (
@@ -190,7 +187,7 @@ const Embedder = ({ selectedRowData, setSelectedRowData }) => {
     // Actions with animated copy button
     {
       accessorKey: "actions",
-      header:"Actions",
+      header: "Actions",
       id: "actions",
       cell: ({ row }) => {
         return (
@@ -255,13 +252,13 @@ const Embedder = ({ selectedRowData, setSelectedRowData }) => {
       </div>
       {openDeleteDialog && (
         <DialogCommon
-          headerTitle="Deactivate User"
+          headerTitle="Delete Image"
           open={openDeleteDialog}
           onOpenChange={setOpenDeleteDialog}
         >
           <>
             <p>
-              Are you sure you want to delete this Tag? This operation is
+              Are you sure you want to delete this Image? This operation is
               irreversible.
             </p>
             <div className="flex items-center gap-2 justify-between pt-4">
@@ -280,7 +277,7 @@ const Embedder = ({ selectedRowData, setSelectedRowData }) => {
                 }}
                 isLoading={isDeleteLoading}
               >
-                Delete Tag
+                Delete
               </Button>
             </div>
           </>
