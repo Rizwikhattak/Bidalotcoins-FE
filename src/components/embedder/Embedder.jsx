@@ -190,41 +190,7 @@ const Embedder = ({ selectedRowData, setSelectedRowData }) => {
     // Actions with animated copy button
     {
       accessorKey: "actions",
-      header: ({ column }) => (
-        <div className="ml-2">
-          <DataTableColumnHeaderCommon
-            column={column}
-            title={
-              <>
-                <span>Actions</span>
-                <span>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="ghost">
-                        <ThreeDotsMenuIcon className="" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-2">
-                      <div className="flex flex-col gap-2 w-fit">
-                        <Button
-                          variant="ghost"
-                          className="justify-start text-user-status-deactivated  "
-                          onClick={async () => {
-                            await bulkDeleteEmbedder();
-                          }}
-                        >
-                          Delete All
-                        </Button>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </span>
-              </>
-            }
-            className="space-x-2"
-          />
-        </div>
-      ),
+      header:"Actions",
       id: "actions",
       cell: ({ row }) => {
         return (
