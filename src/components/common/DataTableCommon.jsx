@@ -36,6 +36,7 @@ export function DataTableCommon({
   totalDataCount = 0,
   // onSortChange, // New prop for handling sort changes
   onFetchData,
+  onTableInstanceChange, // NEW: Callback to pass table instance to parent
 }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -152,6 +153,13 @@ export function DataTableCommon({
       }
     },
   });
+
+  // NEW: Pass table instance to parent component
+  useEffect(() => {
+    if (onTableInstanceChange) {
+      onTableInstanceChange(table);
+    }
+  }, [table, onTableInstanceChange]);
 
   return (
     <div className={`overflow-y-hidden mt-4 rounded-lg border`}>

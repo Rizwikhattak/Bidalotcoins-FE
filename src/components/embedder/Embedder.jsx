@@ -5,7 +5,7 @@ import {
   useDeactivateUserMutation,
   useGetUsersQuery,
 } from "../../app/features/users/usersApi";
-import { formateDateTime } from "../../utils/Helpers";
+import { formateDateTime, getSelectedRows } from "../../utils/Helpers";
 import { Edit, Search, Trash, Copy, Check } from "lucide-react";
 import ThreeDotsMenuIcon from "../icons/ThreeDotsMenuIcon";
 import { APP_CONSTANTS } from "../../utils/Constants";
@@ -18,13 +18,12 @@ import {
 import SelectFiltersCommon from "../common/SelectFiltersCommon";
 import DialogCommon from "../common/DialogCommon";
 import {
-  useDeleteTagMutation,
-  useGetTagsQuery,
-  useUpdateTagMutation,
-} from "../../app/features/tags/tagsApi";
-import { useGetEmbeddersQuery } from "../../app/features/embedder/embeddersApi";
+  useDeleteEmbedderMutation,
+  useGetEmbeddersQuery,
+} from "../../app/features/embedder/embeddersApi";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
 
 // Animated Copy Button Component
 const CopyButton = ({ textToCopy }) => {
@@ -62,32 +61,57 @@ const CopyButton = ({ textToCopy }) => {
   );
 };
 
-const Embedder = ({
-  selectedRowData,
-  setSelectedRowData,
-  openDialog,
-  setOpenDialog,
-}) => {
+const Embedder = ({ selectedRowData, setSelectedRowData }) => {
+  console.log("selectedRowData", selectedRowData);
   const { data, isLoading } = useGetEmbeddersQuery();
-  const [deleteTag, { isLoading: isDeleteLoading }] = useDeleteTagMutation();
-  const [updateTag, { isLoading: isUpdateLoading }] = useUpdateTagMutation();
+  const [deleteEmbedder, { isLoading: isDeleteLoading }] =
+    useDeleteEmbedderMutation();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openDeactivateDialog, setOpenDeactivateDialog] = useState(false);
+  
 
-  function getStatusColors(status) {
-    switch (status) {
-      case APP_CONSTANTS.INVIITED_STATUS:
-        return "bg-user-status-invited text-black ";
-      case APP_CONSTANTS.ACTIVE_STATUS:
-        return "bg-user-status-active";
-      case APP_CONSTANTS.DEACTIVATED_STATUS:
-        return "bg-user-status-deactivated text-background";
-      default:
-        return "bg-gray-200";
-    }
-  }
+  // Get selected rows whenever you need them
+
+
 
   const columns = [
+    // Checkbox Select Column
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected()
+              ? true
+              : table.getIsSomePageRowsSelected()
+              ? "indeterminate"
+              : false
+          }
+          onCheckedChange={(value) =>
+            table.toggleAllPageRowsSelected(value === true)
+          }
+          aria-label="Select all"
+          className="bg-gray-200"
+        />
+      ),
+      cell: ({ row }) => (
+        <>
+          <Checkbox
+            checked={
+              row.getIsSelected()
+                ? true
+                : row.getIsSomeSelected()
+                ? "indeterminate"
+                : false
+            }
+            onCheckedChange={(value) => row.toggleSelected(value === true)}
+            aria-label="Select row"
+            className="bg-gray-200"
+          />
+        </>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "filename",
       header: ({ column }) => (
@@ -166,10 +190,58 @@ const Embedder = ({
     // Actions with animated copy button
     {
       accessorKey: "actions",
-      header: "Actions",
+      header: ({ column }) => (
+        <div className="ml-2">
+          <DataTableColumnHeaderCommon
+            column={column}
+            title={
+              <>
+                <span>Actions</span>
+                <span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost">
+                        <ThreeDotsMenuIcon className="" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-2">
+                      <div className="flex flex-col gap-2 w-fit">
+                        <Button
+                          variant="ghost"
+                          className="justify-start text-user-status-deactivated  "
+                          onClick={async () => {
+                            await bulkDeleteEmbedder();
+                          }}
+                        >
+                          Delete All
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </span>
+              </>
+            }
+            className="space-x-2"
+          />
+        </div>
+      ),
       id: "actions",
       cell: ({ row }) => {
-        return <CopyButton textToCopy={row.original?.html_code || ""} />;
+        return (
+          <div className="space-x-3">
+            <CopyButton textToCopy={row.original?.html_code || ""} />
+            <Button
+              variant="ghost"
+              className="justify-start text-user-status-deactivated  "
+              onClick={async () => {
+                setSelectedRowData(row.original);
+                setOpenDeleteDialog(true);
+              }}
+            >
+              <Trash />
+            </Button>
+          </div>
+        );
       },
       enableSorting: false,
       enableHiding: false,
@@ -236,59 +308,13 @@ const Embedder = ({
               <Button
                 variant="destructive"
                 onClick={async () => {
-                  await deleteTag(selectedRowData?.id);
+                  await deleteEmbedder(selectedRowData?.id);
                   setSelectedRowData(null);
                   setOpenDeleteDialog(false);
                 }}
                 isLoading={isDeleteLoading}
               >
                 Delete Tag
-              </Button>
-            </div>
-          </>
-        </DialogCommon>
-      )}
-      {openDeactivateDialog && (
-        <DialogCommon
-          headerTitle="Deactivate User"
-          open={openDeactivateDialog}
-          onOpenChange={setOpenDeactivateDialog}
-        >
-          <>
-            <p>
-              {selectedRowData?.status === APP_CONSTANTS.DEACTIVATED_STATUS
-                ? "Are you sure you want to reactivate this tag?"
-                : "Are you sure you want to deactivate this tag?"}
-            </p>
-            <div className="flex items-center gap-2 justify-between pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setOpenDeactivateDialog(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant={
-                  selectedRowData?.status === APP_CONSTANTS.INACTIVE_STATUS
-                    ? "activate"
-                    : "destructive"
-                }
-                onClick={async () => {
-                  await updateTag({
-                    id: selectedRowData?.id,
-                    status:
-                      selectedRowData?.status === APP_CONSTANTS.INACTIVE_STATUS
-                        ? APP_CONSTANTS.ACTIVE_STATUS
-                        : APP_CONSTANTS.INACTIVE_STATUS,
-                  });
-                  setSelectedRowData(null);
-                  setOpenDeactivateDialog(false);
-                }}
-                isLoading={isUpdateLoading}
-              >
-                {selectedRowData?.status === APP_CONSTANTS.INACTIVE_STATUS
-                  ? "Activate Tag"
-                  : "Deactivate Tag"}
               </Button>
             </div>
           </>

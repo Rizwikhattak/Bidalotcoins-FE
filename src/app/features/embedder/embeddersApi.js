@@ -52,20 +52,20 @@ const embeddersApi = api.injectEndpoints({
         url: `${API_URLS.EMBEDDER}?id=${id}`,
         method: "DELETE",
       }),
-      async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        const patchList = dispatch(
-          api.util.updateQueryData("getEmbedders", undefined, (draft) => {
-            if (!draft?.data) return;
-            return null;
-          })
-        );
-        try {
-          await queryFulfilled;
-        } catch (err) {
-          patchList.undo();
-          console.error(err);
-        }
-      },
+      // async onQueryStarted(id, { dispatch, queryFulfilled }) {
+      //   const patchList = dispatch(
+      //     api.util.updateQueryData("getEmbedders", undefined, (draft) => {
+      //       if (!draft?.data) return;
+      //       return draft?.data?.filter((item) => item?.id !== id);
+      //     })
+      //   );
+      //   try {
+      //     await queryFulfilled;
+      //   } catch (err) {
+      //     patchList.undo();
+      //     console.error(err);
+      //   }
+      // },
       invalidatesTags: [{ type: RTK_TAGS.EMBEDDER, id: "LIST" }],
     }),
   }),
@@ -77,5 +77,5 @@ export const {
   useUpdateEmbedderMutation,
   useDeleteEmbedderMutation,
   useDownloadCSVQuery,
-  useLazyDownloadCSVQuery
+  useLazyDownloadCSVQuery,
 } = embeddersApi;

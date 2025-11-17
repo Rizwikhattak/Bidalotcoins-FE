@@ -14,4 +14,12 @@ export function formateDateTime(dateTimeString) {
   return dateTimeString.split(" ");
 }
 
-console.log(formateDateTime("2025-10-12 19:38:18"));
+export const getSelectedRows = (tableInstance) => {
+  if (tableInstance) {
+    const selectedRows = tableInstance.getSelectedRowModel().rows;
+    const selectedData = selectedRows.map((row) => row.original);
+    console.log("Selected rows:", selectedData);
+    return selectedData;
+  }
+  return [];
+};
