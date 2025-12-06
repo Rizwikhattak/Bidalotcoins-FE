@@ -13,6 +13,9 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { useTheme } from "../../hooks/useTheme";
 
 const AuthLayout = ({ children, title = "", description = "" }) => {
+
+
+  
   return (
     <>
       {/* Desktop Layout - hidden on mobile (lg breakpoint and above) */}

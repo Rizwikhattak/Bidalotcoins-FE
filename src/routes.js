@@ -1,17 +1,17 @@
-import AdminLoginPage from "./pages/Admin/auth/Page";
+import AdminLoginPage from "./pages/admin-pages/auth/Page.jsx";
 import { APP_CONSTANTS, GLOBAL_ROUTES, PERMISSIONS } from "./utils/Constants";
-import DashboardPage from "@/pages/Admin/dashboards/Page.jsx";
-import AuctionsPage from "@/pages/Admin/auctions/Page.jsx";
-import LotsPage from "@/pages/Admin/lot/Page.jsx";
-import LiveSessionPage from "@/pages/Admin/live-session/Page.jsx";
-import TagsPage from "@/pages/Admin/tags/Page.jsx";
-import BidingHistoryPage from "@/pages/Admin/biding-history/Page.jsx";
-import UserManagementPage from "@/pages/Admin/user-management/Page.jsx";
-import FaqsPage from "@/pages/Admin/faqs/Page.jsx";
-import NewsUpdatesPage from "@/pages/Admin/news-updates/Page.jsx";
-import NotificationsPage from "@/pages/Admin/notifications/Page.jsx";
-import EmbeddersPage from "@/pages/Admin/embedder/Page.jsx";
-import ProfileSettingsPage from "@/pages/Admin/profile-settings/Page.jsx";
+import DashboardPage from "./pages/admin-pages/dashboards/Page.jsx";
+import AuctionsPage from "./pages/admin-pages/auctions/Page.jsx";
+import LotsPage from "./pages/admin-pages/lot/Page.jsx";
+import LiveSessionPage from "./pages/admin-pages/live-session/Page.jsx";
+import TagsPage from "./pages/admin-pages/tags/Page.jsx";
+import BidingHistoryPage from "./pages/admin-pages/biding-history/Page.jsx";
+import UserManagementPage from "./pages/admin-pages/user-management/Page.jsx";
+import FaqsPage from "./pages/admin-pages/faqs/Page.jsx";
+import NewsUpdatesPage from "./pages/admin-pages/news-updates/Page.jsx";
+import NotificationsPage from "./pages/admin-pages/notifications/Page.jsx";
+import EmbeddersPage from "./pages/admin-pages/embedder/Page.jsx";
+import ProfileSettingsPage from "./pages/admin-pages/profile-settings/Page.jsx";
 
 import DashboardIcon from "./components/icons/DashboardIcon.jsx";
 import AuctionsIcon from "./components/icons/AuctionsIcon.jsx";
@@ -25,6 +25,7 @@ import NotificationsIcon from "./components/icons/NotificationsIcon.jsx";
 import AddNewLot from "./components/lot/AddNewLot.jsx";
 import ForgetPasswordPage1 from "./components/auth/ForgetPasswordPage1.jsx";
 import VerifyLinks from "./components/auth/VerifyLinks.jsx";
+import HomePage from "./pages/public-pages/home/Page.jsx";
 import AddUpdateAuctions from "./components/auctions/AddUpdateAuctions.jsx";
 import SetPassword from "./components/auth/SetPassword.jsx";
 import { Newspaper } from "lucide-react";
@@ -75,6 +76,15 @@ export const publicRoutes = [
     withSidebar: false,
     font: "admin-font",
     isAdminRoute: true,
+  },
+  {
+    path: GLOBAL_ROUTES.HOME,
+    name: "Home page",
+    component: HomePage,
+    protected: false,
+    withSidebar: false,
+    font: "admin-font",
+    isAdminRoute: false,
   },
 ];
 export const authRequiredRoutes = [

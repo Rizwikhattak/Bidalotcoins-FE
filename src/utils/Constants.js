@@ -103,7 +103,7 @@ export const GLOBAL_ROUTES = {
   ADMIN_PROFILE_SETTINGS: "/admin/profile-settings/",
 
   // ================= CUSTOMER =================
-  HOME: "/",
+  HOME: "/home",
   AUCTIONS: "/auction",
   AUCTION_DETAIL: "/auction/:id", // dynamic auction page
   BUY_NOW: "/buy-now",
@@ -166,7 +166,7 @@ export const API_URLS = {
   NEWS_UPDATES: "marketplace/v1/news/update/",
 
   //Contact Us
-  CONTACT_US : "misc/v1/contactus/",
+  CONTACT_US: "misc/v1/contactus/",
 
   // Profile Settings
   PERSONAL_SETTINGS: "user/v1/profile/",
