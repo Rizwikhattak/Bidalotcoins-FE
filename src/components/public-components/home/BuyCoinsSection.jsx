@@ -1,8 +1,64 @@
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Section } from "lucide-react";
+import PlaceholderImage from "@/assets/images/live-auction-img.png";
+import SectionHeadings from "../SectionHeadings";
+import CarouselCommon from "../../common/CarouselCommon";
 
+const AuctionCard = ({
+  title,
+  price,
+  bgColor,
+  labelColor = "oklch(0.77 0.14 91.05)",
+  cardFillColor = "#1E1E1E",
+  isHot = true,
+}) => {
+  return (
+    <div
+      className={`relative overflow-hidden rounded-3xl p-8 min-h-[400px] flex flex-col justify-between ${bgColor}`}
+    >
+      {isHot && (
+        <Badge className="absolute right-6 top-6 bg-primary text-black hover:bg-primary/90 rounded-full px-4 py-2 font-semibold">
+          HOT
+          <br />
+          NOW
+        </Badge>
+      )}
+
+      <div className="relative z-10">
+        <h3 className="text-3xl  text-white leading-tight font-[Playfair]">
+          {title}
+        </h3>
+        <p className="mt-4 text-xs text-gray-300 font-light">Coin Price</p>
+        <p className="mb-4 text-4xl font-bold ">{price}</p>
+      </div>
+
+      <div className="space-y-4 absolute top-0 right-10  z-30">
+        <p
+          className="text-white h-20 p-2 w-16 rounded-b-full text-center "
+          style={{ backgroundColor: labelColor }}
+        >
+          Hot Now
+        </p>
+      </div>
+
+      {/* Decorative Coin Image */}
+      <div
+        className={`absolute right-[-80px] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full flex items-center justify-center z-10 overflow-visible pointer-events-none`}
+        style={{ backgroundColor: cardFillColor }}
+      >
+        <div className="w-[300px] h-[300px] p-4">
+          <img
+            src={PlaceholderImage}
+            alt="Coin"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 const CoinCard = ({ lotNumber, title, stock, price }) => {
   return (
     <div className="flex-shrink-0 w-full sm:w-64 rounded-lg border bg-card p-4 shadow-sm transition-all hover:shadow-md">
@@ -75,41 +131,41 @@ const BuyCoinsSection = () => {
   ];
 
   return (
-    <section className="py-16 md:py-24">
-      <div className="container mx-auto px-4">
+    <section className="py-16 md:py-24 px-10">
+      <div className="">
         {/* Section Header */}
-        <div className="mb-12 flex items-center justify-between">
+        <div className="mb-12">
           <div>
-            <Badge variant="outline" className="mb-4">
-              <ArrowRight className="mr-1 h-3 w-3" />
-              BUY OUR
-            </Badge>
-            <h2 className="text-3xl font-bold md:text-4xl">
+            <SectionHeadings title="BUY COINS" />
+            <h2 className="text-3xl font-semibold md:text-5xl font-[Playfair]">
               Buy Coins{" "}
-              <span className="font-normal text-muted-foreground">Instantly</span>
+              <span className="font-normal text-muted-foreground">
+                Instantly
+              </span>
             </h2>
           </div>
-
-          {/* Navigation Arrows */}
-          <div className="hidden gap-2 md:flex">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => scroll("left")}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => scroll("right")}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
+          <div className="py-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <AuctionCard
+              title="1964 Kennedy Half Dollar"
+              price={<span className="text-primary">$6,367.00</span>}
+              bgColor="bg-foreground"
+            />
+            <AuctionCard
+              title="1943 Steel Wheat Penny"
+              price={<span className="text-black">$6,367.00</span>}
+              bgColor="bg-[#876900]"
+              labelColor="black"
+              cardFillColor="#9B7D14"
+            />
           </div>
         </div>
 
         {/* Coins Carousel */}
+        <div className="px-4">
+          {" "}
+          <CarouselCommon />
+        </div>
+
         <div
           ref={scrollContainerRef}
           className="mb-8 flex gap-6 overflow-x-auto pb-4 scrollbar-hide"

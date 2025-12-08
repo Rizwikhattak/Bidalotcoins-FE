@@ -70,7 +70,7 @@ const GenerateHtmlDialog = ({ open, onOpenChange, selectedRows }) => {
     .product-image-container {
       position: relative;
       width: 100%;
-      padding-top: 100%;
+      height: 180px;
       background: #f8f9fa;
       overflow: hidden;
     }
@@ -80,13 +80,12 @@ const GenerateHtmlDialog = ({ open, onOpenChange, selectedRows }) => {
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       transition: transform 0.3s ease;
     }
 
     .product-card:hover .product-image {
-      transform: scale(1.05);
+      transform: scale(1.02);
     }
 
     .product-tag {

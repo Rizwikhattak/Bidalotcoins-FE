@@ -337,7 +337,7 @@
   --user-status-invited: #e4e4e4;
   --user-status-deactivated: #b90101;
   --pale-sage: #e8e9e2;
-
+  --custom-soft-marigold: #d4af3733;
   --font-sans: Montserrat, sans-serif;
   --font-serif: "Geist", "Geist Fallback", ui-serif, Georgia, Cambria,
     "Times New Roman", Times, serif;
@@ -397,6 +397,8 @@
   --user-status-invited: #e4e4e4;
   --user-status-deactivated: #b90101;
   --pale-sage: #e8e9e2;
+  --custom-soft-marigold: #d4af3733;
+
   --shadow-2xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0px oklch(0 0 0 / 0.1),
@@ -448,6 +450,8 @@
   --color-user-status-invited: var(--user-status-invited);
   --color-user-status-deactivated: var(--user-status-deactivated);
   --color-pale-sage: #e8e9e2;
+  --color-custom-soft-marigold: #d4af3733;
+  
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
