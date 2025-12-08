@@ -85,29 +85,31 @@ const AddUpdateEmbedder = ({
     // Define CSV headers
     const headers = [
       "ID",
-      "Created At",
+      "Name",
+      "Description",
+      "Price",
+      "Tag",
+      "Image URL",
       "Filename",
       "File Size",
-      "Width",
-      "Height",
       "Dimensions",
+      "Created At",
       "HTML Code",
-      "Image URL",
-      "Created By",
     ];
 
     // Convert data to CSV rows
     const rows = dataArray.map((item) => [
-      item.id,
-      item.created_at,
-      item.filename,
-      item.file_size,
-      item.width,
-      item.height,
-      item.dimensions,
-      item.html_code,
-      item.image,
-      item.created_by,
+      item.id || "",
+      item.name || "",
+      item.description || "",
+      item.price || "",
+      item.tag || "",
+      item.image || "",
+      item.filename || "",
+      item.file_size || "",
+      item.dimensions || "",
+      item.created_at || "",
+      item.html_code || "",
     ]);
 
     // Combine headers and rows
