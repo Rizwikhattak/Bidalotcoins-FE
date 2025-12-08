@@ -71,7 +71,9 @@ const Navbar = () => {
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Auction</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent ">
+                Auction
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[400px] gap-3 p-4">
                   <li>
@@ -169,12 +171,15 @@ const Navbar = () => {
           <Button variant="ghost" size="icon" className="hidden md:flex">
             <Search className="h-5 w-5" />
           </Button>
-          <Button variant="outline" className="rounded-full">
+          <Button
+            variant="outline"
+            className="rounded-full border border-foreground"
+          >
             <Link className="hover:bg-transparent" to="/login">
               Login
             </Link>
           </Button>
-          <Button className="rounded-full">
+          <Button className="rounded-full bg-foreground">
             <Link className="hover:bg-transparent" to="/register">
               Register
             </Link>

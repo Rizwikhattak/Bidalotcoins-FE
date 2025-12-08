@@ -2,20 +2,67 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+/* ===========================
+   MONTSERRAT (ALL WEIGHTS)
+   =========================== */
+
+/* Thin 100 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-Thin.ttf") format("truetype");
+  font-weight: 100;
+}
+
+/* Thin Italic 100 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-ThinItalic.ttf")
+    format("truetype");
+  font-weight: 100;
+  font-style: italic;
+}
+
+/* ExtraLight 200 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-ExtraLight.ttf")
+    format("truetype");
+  font-weight: 200;
+}
+
+/* ExtraLight Italic 200 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-ExtraLightItalic.ttf")
+    format("truetype");
+  font-weight: 200;
+  font-style: italic;
+}
+
+/* Light 300 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-Light.ttf") format("truetype");
+  font-weight: 300;
+}
+
+/* Light Italic 300 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-LightItalic.ttf")
+    format("truetype");
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* Regular 400 */
 @font-face {
   font-family: "Montserrat";
   src: url("./assets/fonts/monsterat/Montserrat-Regular.ttf") format("truetype");
   font-weight: 400;
-  font-style: normal;
 }
 
-@font-face {
-  font-family: "Montserrat";
-  src: url("./assets/fonts/monsterat/Montserrat-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-}
-
+/* Italic 400 */
 @font-face {
   font-family: "Montserrat";
   src: url("./assets/fonts/monsterat/Montserrat-Italic.ttf") format("truetype");
@@ -23,9 +70,235 @@
   font-style: italic;
 }
 
-/* Add more weights as needed */
-body {
-  /* font-family: "Montserrat", sans-serif; */
+/* Medium 500 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+
+/* Medium Italic 500 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-MediumItalic.ttf")
+    format("truetype");
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* SemiBold 600 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-SemiBold.ttf")
+    format("truetype");
+  font-weight: 600;
+}
+
+/* SemiBold Italic 600 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-SemiBoldItalic.ttf")
+    format("truetype");
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Bold 700 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+/* Bold Italic 700 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-BoldItalic.ttf")
+    format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* ExtraBold 800 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-ExtraBold.ttf")
+    format("truetype");
+  font-weight: 800;
+}
+
+/* ExtraBold Italic 800 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-ExtraBoldItalic.ttf")
+    format("truetype");
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* Black 900 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-Black.ttf") format("truetype");
+  font-weight: 900;
+}
+
+/* Black Italic 900 */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/monsterat/Montserrat-BlackItalic.ttf")
+    format("truetype");
+  font-weight: 900;
+  font-style: italic;
+}
+/* ===========================
+   PLAYFAIR DISPLAY (ALL WEIGHTS)
+   =========================== */
+
+/* Black 900 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-Black.ttf")
+    format("truetype");
+  font-weight: 900;
+}
+
+/* Black Italic 900 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-BlackItalic.ttf")
+    format("truetype");
+  font-weight: 900;
+  font-style: italic;
+}
+
+/* ExtraBold 800 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-ExtraBold.ttf")
+    format("truetype");
+  font-weight: 800;
+}
+
+/* ExtraBold Italic 800 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-ExtraBoldItalic.ttf")
+    format("truetype");
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* Bold 700 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-Bold.ttf")
+    format("truetype");
+  font-weight: 700;
+}
+
+/* Bold Italic 700 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-BoldItalic.ttf")
+    format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* SemiBold 600 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-SemiBold.ttf")
+    format("truetype");
+  font-weight: 600;
+}
+
+/* SemiBold Italic 600 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-SemiBoldItalic.ttf")
+    format("truetype");
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Medium 500 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-Medium.ttf")
+    format("truetype");
+  font-weight: 500;
+}
+
+/* Medium Italic 500 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-MediumItalic.ttf")
+    format("truetype");
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* Regular 400 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-Regular.ttf")
+    format("truetype");
+  font-weight: 400;
+}
+
+/* Italic 400 */
+@font-face {
+  font-family: "Playfair";
+  src: url("./assets/fonts/playfair-display/PlayfairDisplay-Italic.ttf")
+    format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+.glass {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.08); /* subtle white tint base */
+}
+
+/* Main glossy highlight - top-left */
+.glass::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 70%;
+  height: 60%;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.12) 30%,
+    rgba(255, 255, 255, 0.04) 60%,
+    transparent 80%
+  );
+  filter: blur(20px);
+  mix-blend-mode: overlay;
+  opacity: 0.9;
+}
+
+/* Subtle edge highlight for depth */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 40%,
+    transparent 100%
+  );
+  opacity: 0.7;
 }
 :root {
   --background: oklch(1 0 0);
@@ -63,6 +336,8 @@ body {
   --user-status-active: #22c55e;
   --user-status-invited: #e4e4e4;
   --user-status-deactivated: #b90101;
+  --pale-sage: #e8e9e2;
+
   --font-sans: Montserrat, sans-serif;
   --font-serif: "Geist", "Geist Fallback", ui-serif, Georgia, Cambria,
     "Times New Roman", Times, serif;
@@ -121,6 +396,7 @@ body {
   --user-status-active: #22c55e;
   --user-status-invited: #e4e4e4;
   --user-status-deactivated: #b90101;
+  --pale-sage: #e8e9e2;
   --shadow-2xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0px oklch(0 0 0 / 0.1),
@@ -171,6 +447,7 @@ body {
   --color-user-status-active: var(--user-status-active);
   --color-user-status-invited: var(--user-status-invited);
   --color-user-status-deactivated: var(--user-status-deactivated);
+  --color-pale-sage: #e8e9e2;
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);

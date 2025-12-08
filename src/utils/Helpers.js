@@ -14,12 +14,14 @@ export function formateDateTime(dateTimeString) {
   return dateTimeString.split(" ");
 }
 
-export const getSelectedRows = (tableInstance) => {
-  if (tableInstance) {
-    const selectedRows = tableInstance.getSelectedRowModel().rows;
-    const selectedData = selectedRows.map((row) => row.original);
-    console.log("Selected rows:", selectedData);
-    return selectedData;
+export const GetSelectedRowsFromTable = (table) => {
+  if (table) {
+    const rowSelection = table.getState().rowSelection;
+    const allRows = table.getRowModel().rows;
+    const selectedRows = allRows
+      .filter((row) => rowSelection[row.id])
+      .map((row) => row.original);
+    return selectedRows;
   }
   return [];
 };

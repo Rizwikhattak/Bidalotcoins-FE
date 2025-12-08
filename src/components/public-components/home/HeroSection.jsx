@@ -1,15 +1,14 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-
+import MoveDownRightIcon from "@/assets/images/icons/move-down-right.svg";
 const HeroSection = () => {
   return (
     <section className="relative py-20 md:py-32">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl text-center">
           {/* Main Heading */}
-          <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-            <span className="text-primary">Discover</span>{" "}
+          <h1 className="mb-6 font-[Playfair] text-4xl font-semibold  md:text-5xl lg:text-6xl">
+            <span className="text-primary ">Discover</span>{" "}
             <span className="text-foreground">
               One Historic Coin at a Time.
             </span>
@@ -25,21 +24,19 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="min-w-[220px]">
+            <Button size="lg" className=" rounded-full">
               Browse Upcoming Auctions
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <img src={MoveDownRightIcon} alt="" />
             </Button>
-            <Button variant="outline" size="lg" className="min-w-[220px]">
+            <Button
+              variant="outline"
+              size="lg"
+              className="border border-primary rounded-full text-primary"
+            >
               Start a Bid
             </Button>
           </div>
         </div>
-      </div>
-
-      {/* Decorative Elements */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 right-0 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -bottom-24 left-0 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
       </div>
     </section>
   );

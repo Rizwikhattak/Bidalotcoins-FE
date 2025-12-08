@@ -43,17 +43,26 @@ const AddUpdateEmbedder = ({
   const [updateEmbedder, { isLoading: isUpdateLoading }] =
     useUpdateEmbedderMutation();
   const initialValues = {
-    images: undefined,
+    name: "",
+    description: "",
+    price: "",
+    tag: "",
+    image: undefined,
   };
   const form = useForm({
     defaultValues: initialValues,
     resolver: zodResolver(embedderScheema),
+    mode: "onChange",
   });
 
   useEffect(() => {
     if (selectedEmbedder) {
       form.reset({
-        images: selectedEmbedder?.images || [],
+        name: selectedEmbedder?.name || "",
+        description: selectedEmbedder?.description || "",
+        price: selectedEmbedder?.price || "",
+        tag: selectedEmbedder?.tag || "",
+        image: selectedEmbedder?.image || undefined,
       });
     } else {
       form.reset(initialValues);
@@ -129,11 +138,17 @@ const AddUpdateEmbedder = ({
   const handleFormSubmit = async (submittedData) => {
     try {
       const formData = new FormData();
-      if (submittedData?.images?.length > 0)
-        submittedData.images.forEach((image) => {
-          formData.append("images", image);
-        });
-      else formData.append("images", submittedData?.images);
+
+      // Append text fields
+      formData.append("name", submittedData.name);
+      formData.append("description", submittedData.description);
+      formData.append("price", submittedData.price);
+      formData.append("tag", submittedData.tag);
+
+      // Append image
+      if (submittedData?.image) {
+        formData.append("image", submittedData.image);
+      }
 
       selectedEmbedder
         ? await updateEmbedder({
@@ -177,33 +192,74 @@ const AddUpdateEmbedder = ({
               form.reset(initialValues);
             }
           }}
-          headerTitle="Add Images"
-          className="sm:max-w-xl"
+          headerTitle={selectedEmbedder ? "Update Image" : "Add Images"}
+          className="sm:max-w-3xl"
         >
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleFormSubmit, handleFormError)}
+              className="space-y-4"
             >
-              <FileUploadCommon
-                control={form.control}
-                name="images"
-                title="Upload Images"
-                accept="image/jpeg,image/png,image/jpg"
-                maxFiles={20}
-                maxSize={5}
-                showPreview={true}
-                className="col-span-4"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InputCommon
+                  control={form.control}
+                  name="name"
+                  label="Name"
+                  placeholder="e.g Morgan Silver Dollar"
+                />
+                <InputCommon
+                  control={form.control}
+                  name="price"
+                  label="Price"
+                  placeholder="e.g 99.99"
+                  type="text"
+                />
+              </div>
 
-              <div className="flex items-center justify-between gap-2 mt-5">
-                <Button type="button" variant="outline">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <TextAreaCommon
+                  control={form.control}
+                  name="description"
+                  label="Description"
+                  placeholder="e.g High quality silver coin from 1921..."
+                />
+                <InputCommon
+                  control={form.control}
+                  name="tag"
+                  label="Tag"
+                  placeholder="e.g 10% off, Last one"
+                />
+              </div>
+
+              <div className="pt-2">
+                <FileUploadCommon
+                  control={form.control}
+                  name="image"
+                  title="Upload Image"
+                  accept="image/jpeg,image/png,image/jpg"
+                  maxFiles={1}
+                  maxSize={15}
+                  showPreview={true}
+                />
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setOpenDialog(false);
+                    setSelectedEmbedder(null);
+                    form.reset(initialValues);
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   isLoading={selectedEmbedder ? isUpdateLoading : isPostLoading}
                 >
-                  {selectedEmbedder ? "Update Image" : "Upload Images"}
+                  {selectedEmbedder ? "Update Image" : "Upload Image"}
                 </Button>
               </div>
             </form>

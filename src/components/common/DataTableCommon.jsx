@@ -18,7 +18,6 @@ import {
 import { useState, useEffect } from "react";
 import { DataTablePaginationCommon } from "./DataTablePaginationCommon";
 import { DataTableViewOptionsCommon } from "./DataTableViewOptionsCommon";
-import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 
@@ -114,6 +113,7 @@ export function DataTableCommon({
     // Configure for server-side pagination:
     manualPagination: true,
     pageCount: totalPages,
+    enableRowSelection: true,
     // Add manual sorting
     manualSorting: true,
     getCoreRowModel: getCoreRowModel(),
