@@ -70,9 +70,10 @@ const GenerateHtmlDialog = ({ open, onOpenChange, selectedRows }) => {
     .product-image-container {
       position: relative;
       width: 100%;
-      height: 180px;
+      padding-top: 75%;
       background: #f8f9fa;
       overflow: hidden;
+      border-radius: 12px 12px 0 0;
     }
 
     .product-image {
@@ -80,7 +81,9 @@ const GenerateHtmlDialog = ({ open, onOpenChange, selectedRows }) => {
       top: 0;
       left: 0;
       width: 100%;
+      height: 100%;
       object-fit: contain;
+      padding: 16px;
       transition: transform 0.3s ease;
     }
 
@@ -171,13 +174,25 @@ const GenerateHtmlDialog = ({ open, onOpenChange, selectedRows }) => {
 
     @media (max-width: 768px) {
       .products-container {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 16px;
         padding: 16px;
       }
 
+      .product-image-container {
+        padding-top: 85%;
+      }
+
+      .product-image {
+        padding: 12px;
+      }
+
       .product-name {
         font-size: 16px;
+      }
+
+      .product-description {
+        font-size: 13px;
       }
 
       .product-price {
@@ -193,8 +208,40 @@ const GenerateHtmlDialog = ({ open, onOpenChange, selectedRows }) => {
     @media (max-width: 480px) {
       .products-container {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 16px;
         padding: 12px;
+      }
+
+      .product-image-container {
+        padding-top: 100%;
+      }
+
+      .product-image {
+        padding: 20px;
+      }
+
+      .product-details {
+        padding: 12px;
+      }
+
+      .product-name {
+        font-size: 15px;
+      }
+
+      .product-description {
+        font-size: 12px;
+        -webkit-line-clamp: 2;
+      }
+
+      .product-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .product-button {
+        width: 100%;
+        padding: 10px 16px;
       }
     }
   </style>
